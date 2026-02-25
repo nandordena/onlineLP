@@ -1,4 +1,6 @@
 <?php
+// include_once __DIR__."/sql.php";
+
 class mainController {
     protected $errors = [];
     protected $success = [];

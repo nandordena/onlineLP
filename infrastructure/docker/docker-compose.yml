@@ -8,8 +8,10 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ../../core:/app/core
+      - ../../core:/var/www/html/core
       - ../../adapters/userManager/public:/var/www/html
+    env_file:
+      - ../../.env
   control_room:
     build:
       context: ../../
@@ -17,5 +19,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ../../core:/app/core
+      - ../../core:/var/www/html/core
       - ../../adapters/controlRoom/public:/var/www/html
+    env_file:
+      - ../../.env

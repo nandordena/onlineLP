@@ -1,5 +1,5 @@
 <?php
-// include_once __DIR__."/sql.php";
+include_once __DIR__."/sql.php";
 
 class mainController {
     protected $errors = [];

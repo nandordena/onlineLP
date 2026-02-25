@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  user_manager:
+    build:
+      context: ../../
+      dockerfile: adapters/userManager/Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ../../core:/app/core
+      - ../../adapters/userManager/public:/var/www/html
+  control_room:
+    build:
+      context: ../../
+      dockerfile: adapters/controlRoom/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ../../core:/app/core
+      - ../../adapters/controlRoom/public:/var/www/html

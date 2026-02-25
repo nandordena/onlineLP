@@ -13,4 +13,4 @@ The proyect is abailable temporaly in the site:
 Ther you can signup and start with yout control panel sending content to direrents screens.
 
 # How to colab
-You can colab this proyect with pull request followint [DEV.md](/DEV.md) instrucions.
+You can colab this proyect with pull request followint [COLAB.md](/DOCU/COLAB.md) instrucions.

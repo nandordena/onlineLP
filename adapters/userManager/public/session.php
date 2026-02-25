@@ -26,7 +26,6 @@ class Session extends mainController {
             return !empty($result);
 
         } catch (\Throwable $th) {
-            echo $th->getMessage();
             $this->addError($th->getMessage());
             return $this->getErrors();
         }

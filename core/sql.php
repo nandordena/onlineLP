@@ -15,7 +15,6 @@ class Sql extends mainController{
                 \PDO::ATTR_EMULATE_PREPARES => false,
             ];
             $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
-            var_dump([$dsn, $username, $password, $options]);
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
             $this->addError("Database connection failed: " . $e->getMessage());

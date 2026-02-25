@@ -2,17 +2,21 @@
 class Sql extends mainController{
     protected $pdo;
 
-    public static function pdo() {
+    public function pdo() {
+        global $_ADAPTER;
         try {
-            $username = getenv($_ADAPTER.'DB_USER') ?: '';
-            $password = getenv($_ADAPTER.'DB_PASS') ?: '';
-            $host = getenv($_ADAPTER.'DB_HOST') ?: '';
+            $username = getenv($_ADAPTER.'_DB_USER') ?: '';
+            $password = getenv($_ADAPTER.'_DB_PASS') ?: '';
+            $host = getenv($_ADAPTER.'_DB_HOST') ?: '';
+            $db   = getenv($_ADAPTER.'_DB_NAME') ?: '';
             $options = [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
                 \PDO::ATTR_EMULATE_PREPARES => false,
             ];
-            return new \PDO($host, $username, $password, $options);
+            $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+            var_dump([$dsn, $username, $password, $options]);
+            return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
             $this->addError("Database connection failed: " . $e->getMessage());
             return $this->getErrors();
@@ -20,7 +24,7 @@ class Sql extends mainController{
     }
 
 
-    public static function query($params){
+    public function query($params){
         try {
             // Build a PDO query with the given params
             $tab = isset($params['tab']) ? $params['tab'] : null;
@@ -49,8 +53,7 @@ class Sql extends mainController{
 
             $stmt->execute();
 
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
@@ -58,25 +61,31 @@ class Sql extends mainController{
         }
     }
 }
+$SQL = new Sql();
 
 trait MethodsSql {
     public function sqlGet($param){
+        global $SQL;
         try {
-            Sql:query([
+            return $SQL->query([
                 "tab"=>$this->$tab
-                ,"query"=>[
-                    "and"=>[
-                        "sessionkey"=>$param['sessionkey']
-                        ,"user"=>$param['user']
-                    ]
-                ]
+                ,"query"=>$param
             ]);
-
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
             return $this->getErrors();
         }
-        
-
+    }
+    public function sqlFind($params){
+        global $SQL;
+        try {
+            return $SQL->query([
+                "tab"=>$this->tab
+                ,"query"=>$params
+            ]);
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            return $this->getErrors();
+        }
     }
 }

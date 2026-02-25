@@ -7,7 +7,7 @@ class mainController {
 
     // Error handler
     public function addError($message) {
-        $this->errors[] = $error;
+        $this->errors[] = $message;
     }
     public function getErrors() {
         return $this->errors;

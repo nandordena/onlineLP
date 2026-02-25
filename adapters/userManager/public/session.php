@@ -1,36 +1,38 @@
 <?php
 include_once __DIR__."/core/mainController.php";
+include_once __DIR__."/core/sql.php";
 
 class Session extends mainController {
-    protected $table = 'session';
-    protected $idColumn = 'id';
+    use MethodsSql;
 
-    public static function validateSession(){
+    public $tab = 'session';
+    public $idColumn = 'id';
+
+    public function validate(){
         try {
             if (session_status() == PHP_SESSION_NONE) {
                 session_start();
             }
             if (!isset($_SESSION['user']) || !isset($_SESSION['sessionkey'])) {
-                throw new Exception("Session is not valid.");
+                return false;
             }
 
             $result = $this->sqlFind([
-                "and":[
-                    "sessionkey":$_SESSION['sessionkey']
-                    ,"user":$_SESSION['user']
+                "and"=>[
+                    "sessionkey"=>$_SESSION['sessionkey']
+                  ,"user"=>$_SESSION['user']
                 ]
             ]);
+            return !empty($result);
 
-
-
-            return true;
         } catch (\Throwable $th) {
+            echo $th->getMessage();
             $this->addError($th->getMessage());
             return $this->getErrors();
         }
     }
 
-    public static function createSession(){
+    public function createSession(){
         try {
             if (session_status() != PHP_SESSION_NONE) {
                 
@@ -47,3 +49,4 @@ class Session extends mainController {
     }
     
 }
+$SESSIONS = new Session();

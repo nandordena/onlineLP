@@ -8,7 +8,7 @@ It consists of a purely online tool where, from the control panel, you can contr
 ```
 
 The proyect is abailable temporaly in the site:
-[freelp.free.nf](freelp.free.nf)
+[onlinelp.free.nf](http://onlinelp.free.nf/)
 
 Ther you can signup and start with yout control panel sending content to direrents screens.
 

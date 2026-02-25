@@ -11,7 +11,7 @@ services:
       - ../../core:/var/www/html/core
       - ../../adapters/userManager/public:/var/www/html
     env_file:
-      - ../../.env
+      - ../../infrastructure/.env
   control_room:
     build:
       context: ../../
@@ -22,4 +22,4 @@ services:
       - ../../core:/var/www/html/core
       - ../../adapters/controlRoom/public:/var/www/html
     env_file:
-      - ../../.env
+      - ../../infrastructure/.env

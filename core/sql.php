@@ -59,6 +59,38 @@ class Sql extends mainController{
             return $this->getErrors();
         }
     }
+    public function insert($params) {
+        try {
+            $tab = isset($params['tab']) ? $params['tab'] : null;
+            $data = isset($params['data']) ? $params['data'] : [];
+            if (!$tab || empty($data)) {
+                $this->addError("Invalid insert parameters");
+                return $this->getErrors();
+            }
+
+            // Build columns and placeholders
+            $columns = array_keys($data);
+            $placeholders = array_map(function($col){ return ":$col"; }, $columns);
+
+            // Prepare SQL
+            $sql = "INSERT INTO `$tab` (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+            $pdo = $this::pdo();
+            $stmt = $pdo->prepare($sql);
+
+            // Bind values
+            foreach ($data as $column => $value) {
+                $stmt->bindValue(":$column", $value);
+            }
+
+            $stmt->execute();
+
+            return $pdo->lastInsertId();
+
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            return $this->getErrors();
+        }
+    }
 }
 $SQL = new Sql();
 
@@ -81,6 +113,18 @@ trait MethodsSql {
             return $SQL->query([
                 "tab"=>$this->tab
                 ,"query"=>$params
+            ]);
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            return $this->getErrors();
+        }
+    }
+    public function sqlInsert($params){
+        global $SQL;
+        try {
+            return $SQL->insert([
+                "tab" => $this->tab,
+                "data" => $params
             ]);
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());

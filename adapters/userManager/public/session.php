@@ -4,9 +4,7 @@ include_once __DIR__."/core/sql.php";
 
 class Session extends mainController {
     use MethodsSql;
-
     public $tab = 'session';
-    public $idColumn = 'id';
 
     public function validate(){
         try {

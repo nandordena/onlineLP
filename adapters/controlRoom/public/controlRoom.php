@@ -6,3 +6,4 @@ class ControllRoom extends mainController {
 
     
 }
+$CONTROLLROOM = new ControllRoom();

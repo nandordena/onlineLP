@@ -6,7 +6,7 @@ services:
       context: ../../
       dockerfile: adapters/userManager/Dockerfile
     ports:
-      - "8081:80"
+      - "8082:80"
     volumes:
       - ../../core:/var/www/html/core
       - ../../adapters/userManager/public:/var/www/html
@@ -19,10 +19,23 @@ services:
       context: ../../
       dockerfile: adapters/controlRoom/Dockerfile
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - ../../core:/var/www/html/core
       - ../../adapters/controlRoom/public:/var/www/html
+    env_file:
+      - ../../infrastructure/.env
+    depends_on:
+      - mysql
+  view_components:
+    build:
+      context: ../../
+      dockerfile: adapters/viewComponents/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ../../core:/var/www/html/core
+      - ../../adapters/viewComponents/public:/var/www/html
     env_file:
       - ../../infrastructure/.env
     depends_on:

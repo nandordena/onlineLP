@@ -1,7 +1,6 @@
-<?php
-$_ADAPTER="CONTROL_ROOM";
+<?
+$_ADAPTER="VIEW_COMPONENTS";
 include_once __DIR__."/core/init.php";
-include_once __DIR__."/controlRoom.php";
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
@@ -10,8 +9,8 @@ switch ($uri) {
         echo 'Home';
         break;
 
-    case 'miendpoint':
-        echo 'Endpoint OK';
+    case 'auth':
+        include_once __DIR__."/auth/index.php";
         break;
 
     default:

@@ -1,5 +1,5 @@
 <?php
-class Sql extends mainController{
+class Sql{
     protected $pdo;
 
     public function pdo() {

@@ -2,7 +2,6 @@
 include_once __DIR__."/sql.php";
 
 class mainController {
-    global $_ADAPTER;
     use MethodsSql;
     
     protected $errors = [];
@@ -29,18 +28,19 @@ class mainController {
                     if (empty($params[$field])) {
                         $this->addError("Field '{$field}' is required.");
                     }
-                // Switch on field for type-specific validation logic
-                switch ($field) {
-                    case 'email':
-                        if (!filter_var($params[$field], FILTER_VALIDATE_EMAIL)) {
-                            $this->addError("Field '{$field}' must be a valid email.");
-                        }
-                        break;
-                    case 'string':
-                        if (!is_string($params[$field]) || strlen(trim($params[$field])) === 0) {
-                            $this->addError("Field '{$field}' must be a non-empty string.");
-                        }
-                        break;
+                    // Switch on field for type-specific validation logic
+                    switch ($field) {
+                        case 'email':
+                            if (!filter_var($params[$field], FILTER_VALIDATE_EMAIL)) {
+                                $this->addError("Field '{$field}' must be a valid email.");
+                            }
+                            break;
+                        case 'string':
+                            if (!is_string($params[$field]) || strlen(trim($params[$field])) === 0) {
+                                $this->addError("Field '{$field}' must be a non-empty string.");
+                            }
+                            break;
+                    }
                 }
             }
             if (!empty($this->getErrors())) {
@@ -108,7 +108,7 @@ class mainController {
         return $decoded !== null ? $decoded : $response;
     }
     public function callAdapter($adapterName, $endpoint, $data = [], $method = 'POST', $headers = []) {
-        globa $_ADAPTER;
+        global $_ADAPTER;
         if($_ADAPTER == $adapterName){
             //TODO : Use this->
             return true;

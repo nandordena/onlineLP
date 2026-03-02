@@ -1,18 +1,20 @@
-<?
-  include __DIR__."/core/js/fetch.php";
-  include __DIR__."/core/js/cookies.php";
-?>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<?
+  include __DIR__."/../core/js/fetch.php";
+  include __DIR__."/../core/js/cookies.php";
+  include __DIR__."/auth.js.php";
+  include __DIR__."/auth.css.php";
+?>
 
 <div id="g_id_onload"
-     data-client_id="995550628836-rqqkpkpaudfam1fusu1g4er22df0t2gf.apps.googleusercontent.com"
+     data-client_id="<?=getenv('googleClientId')?>.apps.googleusercontent.com"
      data-callback="handleCredentialResponse"
      data-ux_mode="popup"
      data-auto_prompt="false">
 </div>
 
-<div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 16px;">
-  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;">
+<div class="auth">
+  <form class="fetchform" method="post" style=""  onEnd="auth.onLogin">
     <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
     <button type="submit" style="margin: 6px 0; width: 60%;">Login</button>
@@ -20,7 +22,7 @@
     <input type="hidden" name="endpoint" value="login">
   </form>
   <hr style="width: 60%; margin: 16px 0 0 0; border: 0; border-top: 1px solid #ccc;">
-  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;">
+  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;"  onEnd="auth.onRegister">
     <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="repass" placeholder="Repeat Password" required style="margin: 4px 0; width: 60%;">
@@ -32,13 +34,3 @@
   <span style="margin: 8px 0; color: #888;">or</span>
   <div class="g_id_signin"></div>
 </div>
-
-<script>
-    function handleCredentialResponse(response) {
-      console.log("JWT:", response.credential);
-    }
-  
-    function signOut() {
-      console.log("Logout = borrar sesión local");
-    }
-</script>

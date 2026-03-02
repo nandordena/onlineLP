@@ -1,6 +1,7 @@
 <?
-$_ADAPTER="VIEW_COMPONENTS";
 include_once __DIR__."/core/init.php";
+
+$_ADAPTER="VIEW_COMPONENTS";
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 

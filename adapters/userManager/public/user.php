@@ -10,7 +10,7 @@ class User extends mainController {
     public $inserPermit = [
         'user'
         ,'pass'
-    ]
+    ];
     
     public function new($params){
         $result = [];

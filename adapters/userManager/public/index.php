@@ -13,6 +13,7 @@ $sessionEndpoints = [
 ];
 $userEndpoints = [
     "new"
+    ,"login"
 ];
 
 switch ($uri) {
@@ -34,10 +35,23 @@ switch ($uri) {
                 $result['errors'],
                 $result['data']
             );
-        } else {
-            http_response_code(404);
-            echo '{"error":"404","errors":["invalid endpoint"]}';
+            die();
+        }
+        if (
+            in_array($uri, $sessionEndpoints)
+            && method_exists($USER, $uri)
+        ) {
+            $result = $USER->$uri($_REQUEST);
+            $MAIN->response(
+                "Endpoint OK",
+                $result['errors'],
+                $result['data']
+            );
+            die();
         }
         break;
     }
 }
+
+http_response_code(404);
+echo '{"error":"404","errors":["invalid endpoint"]}';

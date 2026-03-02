@@ -69,6 +69,56 @@ class User extends mainController {
             return $result;
         }
     }
+    public function login($params) {
+        global $SESSIONS;
+        $result = [];
+        try {
+            // Check for required parameters
+            if (empty($params['email']) || empty($params['pass'])) {
+                $this->addError("Email and password are required.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            // Find user by email
+            $user = $this->sqlFind([
+                "and" => [
+                    "user" => $params['email']
+                ]
+            ]);
+
+            if (empty($user) || !isset($user[0]['pass'])) {
+                $this->addError("Invalid email or password.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            // Verify the password
+            if (!password_verify($params['pass'], $user[0]['pass'])) {
+                $this->addError("Invalid email or password.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            $SESSIONS->createSession($params);
+
+            $result['data'] = [
+                "login" => true,
+                "user" => $params['email'],
+                "sessionKey" => $_SESSION['sessionKey'],
+                "sessionId" => $_SESSION['sessionId'],
+            ];
+            return $result;
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
     public function validateLogin($params) {
         $result = [];
         try {

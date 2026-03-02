@@ -70,7 +70,7 @@
         form.classList.add("loading");
 
         if (!adapter || !endpoint) {
-            alert("Error");
+            console.info("Error");
             return;
         }
 
@@ -100,7 +100,7 @@
                 if (form.classList.contains("loading")) {
                     form.classList.remove("loading");
                 }
-                alert("Error: " + err.message);
+                console.info("Error: " + err.message);
             });
     };
     //EVENT

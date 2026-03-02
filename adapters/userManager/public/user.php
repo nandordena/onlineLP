@@ -39,7 +39,7 @@ class User extends mainController {
             // Check if user already exists in the database
             $existingUser = $this->sqlFind([
                 "and" => [
-                    "user" => $params['user']
+                    "user" => $params['email']
                 ]
             ]);
             if (!empty($existingUser)) {
@@ -53,7 +53,7 @@ class User extends mainController {
             $hashedPassword = password_hash($params['pass'], PASSWORD_DEFAULT);
             // Prepare data to insert
             $userData = [
-                "user" => $params['user'],
+                "user" => $params['email'],
                 "pass" => $hashedPassword
             ];
             // Insert the new user

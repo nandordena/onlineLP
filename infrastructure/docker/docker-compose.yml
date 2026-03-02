@@ -10,6 +10,7 @@ services:
     volumes:
       - ../../core:/var/www/html/core
       - ../../adapters/userManager/public:/var/www/html
+      - ../../infrastructure/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     env_file:
       - ../../infrastructure/.env
     depends_on:
@@ -23,6 +24,7 @@ services:
     volumes:
       - ../../core:/var/www/html/core
       - ../../adapters/controlRoom/public:/var/www/html
+      - ../../infrastructure/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     env_file:
       - ../../infrastructure/.env
     depends_on:
@@ -36,6 +38,7 @@ services:
     volumes:
       - ../../core:/var/www/html/core
       - ../../adapters/viewComponents/public:/var/www/html
+      - ../../infrastructure/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     env_file:
       - ../../infrastructure/.env
     depends_on:

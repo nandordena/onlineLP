@@ -36,14 +36,15 @@
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "*/*"
             },
-            credentials: "include", // Enables cookies/session for cross-origin fetch
-            mode: "cors" // Explicitly allow cross-origin fetch
+            credentials: "include", 
+            mode: "cors"
         };
 
         if (body) {
-            options.body = JSON.stringify(body);
+            options.body = new URLSearchParams(body);
         }
 
         return fetch(url, options)
@@ -66,6 +67,8 @@
         const adapter = form.querySelector('input[name="adapter"]')?.value;
         const endpoint = form.querySelector('input[name="endpoint"]')?.value;
 
+        form.classList.add("loading");
+
         if (!adapter || !endpoint) {
             alert("Error");
             return;
@@ -84,13 +87,19 @@
                 // Handle success, e.g. show message or redirect
                 if (response && response.redirect) {
                     window.location.href = response.redirect;
-                } else if (response && response.message) {
-                    alert(response.message);
-                } else {
-                    alert("Success");
+                }
+                const onEndAttr = form.getAttribute('onend');
+                if (onEndAttr && typeof window[onEndAttr] === 'function') {
+                    window[onEndAttr](response);
+                }
+                if (form.classList.contains("loading")) {
+                    form.classList.remove("loading");
                 }
             })
             .catch(err => {
+                if (form.classList.contains("loading")) {
+                    form.classList.remove("loading");
+                }
                 alert("Error: " + err.message);
             });
     };

@@ -16,14 +16,10 @@ $userEndpoints = [
 ];
 
 switch ($uri) {
-    case '':{
-        http_response_code(404);
-        echo '404';
-        break;
-    }
-    
+    case '':
     case 'session':{
-        echo 'Home';
+        http_response_code(404);
+        echo '{"error":"404","errors":["invalid endpoint"]}';
         break;
     }
 
@@ -32,10 +28,15 @@ switch ($uri) {
             in_array($uri, $userEndpoints)
             && method_exists($USER, $uri)
         ) {
-            echo $USER->$uri($_REQUEST);
+            $result = $USER->$uri($_REQUEST);
+            $MAIN->response(
+                "Endpoint OK",
+                $result['errors'],
+                $result['data']
+            );
         } else {
             http_response_code(404);
-            echo '404';
+            echo '{"error":"404","errors":["invalid endpoint"]}';
         }
         break;
     }

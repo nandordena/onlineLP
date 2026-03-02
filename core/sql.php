@@ -4,6 +4,7 @@ class Sql{
 
     public function pdo() {
         global $_ADAPTER;
+        $result = [];
         try {
             $username = getenv($_ADAPTER.'_DB_USER') ?: '';
             $password = getenv($_ADAPTER.'_DB_PASS') ?: '';
@@ -17,20 +18,25 @@ class Sql{
             $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            $this->addError("Database connection failed: " . $e->getMessage());
-            return $this->getErrors();
+            $result['error'] = "Database connection failed: " . $e->getMessage();
+            $result['data'] = [];
+            echo json_encode($result,true);
+            die();
         }
     }
 
 
     public function query($params){
+        $result = [];
         try {
             // Build a PDO query with the given params
             $tab = isset($params['tab']) ? $params['tab'] : null;
             $conditions = isset($params['query']['and']) ? $params['query']['and'] : [];
             if (!$tab || empty($conditions)) {
-                $this->addError("Invalid query parameters");
-                return $this->getErrors();
+                $result['error'] = "Invalid query parameters";
+                $result['data'] = [];
+                echo json_encode($result,true);
+                die();
             }
 
             // Build WHERE clause with named placeholders
@@ -42,7 +48,7 @@ class Sql{
 
             // Prepare SQL
             $sql = "SELECT * FROM `$tab` WHERE $whereClause";
-            $pdo = $this::pdo();
+            $pdo = $this->pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -55,26 +61,41 @@ class Sql{
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['error'] = "Query faild: " . $th->getMessage();
+            if(getenv("ENV")=="DEV"){
+                $result['errorData'] = [
+                    'sql'=>$sql ?? null
+                ];
+            }
+            $result['data'] = [];
+            echo json_encode($result,true);
+            die();
         }
     }
     public function insert($params) {
+        $result = [];
         try {
             $tab = isset($params['tab']) ? $params['tab'] : null;
             $data = isset($params['data']) ? $params['data'] : [];
             if (!$tab || empty($data)) {
-                $this->addError("Invalid insert parameters");
-                return $this->getErrors();
+                $result['error'] = "Invalid insert parameters";
+                $result['data'] = [];
+                echo json_encode($result,true);
+                die();
             }
 
             // Build columns and placeholders
+            // Filter data to only allowed (permitted) columns
+            if (property_exists($this, 'inserPermit') && is_array($this->inserPermit)) {
+                $permittedColumns = array_flip($this->inserPermit);
+                $data = array_intersect_key($data, $permittedColumns);
+            }
             $columns = array_keys($data);
             $placeholders = array_map(function($col){ return ":$col"; }, $columns);
 
             // Prepare SQL
             $sql = "INSERT INTO `$tab` (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
-            $pdo = $this::pdo();
+            $pdo = $this->pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -87,8 +108,15 @@ class Sql{
             return $pdo->lastInsertId();
 
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['error'] = "Query faild: " . $th->getMessage();
+            if(getenv("ENV")=="DEV"){
+                $result['errorData'] = [
+                    'sql'=>$sql ?? null
+                ];
+            }
+            $result['data'] = [];
+            echo json_encode($result,true);
+            die();
         }
     }
 }
@@ -104,7 +132,9 @@ trait MethodsSql {
             ]);
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         }
     }
     public function sqlFind($params){
@@ -116,7 +146,9 @@ trait MethodsSql {
             ]);
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         }
     }
     public function sqlInsert($params){
@@ -128,7 +160,9 @@ trait MethodsSql {
             ]);
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         }
     }
 }

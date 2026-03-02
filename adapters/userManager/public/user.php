@@ -7,90 +7,112 @@ class User extends mainController {
         'user'=>'email'
         ,'pass'=>'string'
     ];
+    public $inserPermit = [
+        'user'
+        ,'pass'
+    ];
     
     public function new($params){
+        $result = [];
         try {
-        // Error handling and control for params 'user', 'pass', and 'repass', check if correct
+            // Error handling
+            if (empty($params['email'])) {
+                $this->addError("Email cannot be empty.");
+            }
+            if (empty($params['pass'])) {
+                $this->addError("Password cannot be empty.");
+            }
+            if (empty($params['repass'])) {
+                $this->addError("Repeated password cannot be empty.");
+            }
+            if ($params['pass'] !== $params['repass']) {
+                $this->addError("Passwords do not match.");
+            }
+            $this->isValidPassword($params['pass']);
 
-        if (empty($params['user'])) {
-            $this->addError("Username cannot be empty.");
-        }
-        if (empty($params['pass'])) {
-            $this->addError("Password cannot be empty.");
-        }
-        if (empty($params['repass'])) {
-            $this->addError("Repeated password cannot be empty.");
-        }
-        if ($params['pass'] !== $params['repass']) {
-            $this->addError("Passwords do not match.");
-        }
-        $this->isValidPassword($params['pass']);
+            // If there are errors, return them
+            if (!empty($this->getErrors())) {
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+            // Check if user already exists in the database
+            $existingUser = $this->sqlFind([
+                "and" => [
+                    "user" => $params['user']
+                ]
+            ]);
+            if (!empty($existingUser)) {
+                $this->addError("Email already exists.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
 
-        // If there are errors, return them
-        if (!empty($this->getErrors())) {
-            return $this->getErrors();
-        }
-        // Check if user already exists in the database
-        $existingUser = $this->sqlFind([
-            "and" => [
-                "user" => $params['user']
-            ]
-        ]);
-        if (!empty($existingUser)) {
-            $this->addError("Username already exists.");
-            return $this->getErrors();
-        }
-
-        // Hash the password before storing
-        $hashedPassword = password_hash($params['pass'], PASSWORD_DEFAULT);
-        // Prepare data to insert
-        $userData = [
-            "user" => $params['user'],
-            "pass" => $hashedPassword
-        ];
-        // Insert the new user
-        $insertId = $this->sqlInsert($userData);
-        // Return insert id or success message
-        return $insertId;
+            // Hash the password before storing
+            $hashedPassword = password_hash($params['pass'], PASSWORD_DEFAULT);
+            // Prepare data to insert
+            $userData = [
+                "user" => $params['user'],
+                "pass" => $hashedPassword
+            ];
+            // Insert the new user
+            $insertId = $this->sqlInsert($userData);
+            // Return insert id or success message
+            $result['data'] = $insertId;
+            return $result;
 
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
-            return $this->getErrors();
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         }
     }
     public function validateLogin($params) {
+        $result = [];
         try {
             // Check for required parameters
-            if (empty($params['user']) || empty($params['pass'])) {
-                $this->addError("Username and password are required.");
-                return false;
+            if (empty($params['email']) || empty($params['pass'])) {
+                $this->addError("Email and password are required.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
             }
 
-            // Find user by username
+            // Find user by email
             $user = $this->sqlFind([
                 "and" => [
-                    "user" => $params['user']
+                    "user" => $params['email']
                 ]
             ]);
 
             if (empty($user) || !isset($user[0]['pass'])) {
                 // User not found or password field missing
-                return false;
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
             }
 
             // Verify the password
             if (password_verify($params['pass'], $user[0]['pass'])) {
-                return true;
+                $result['data'] = true;
+                return $result;
             }
 
-            return false;
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
-            return false;
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
         }
     }
     // Function to check if a password meets validity requirements
     public function isValidPassword($password) {
+        $result = [];
         // Example requirements, could be loaded from global or config
         $requirements = [
             'min_length' => 6,
@@ -126,9 +148,12 @@ class User extends mainController {
             foreach ($errors as $err) {
                 $this->addError($err);
             }
-            return false;
+            $result['errors'] = $errors;
+            $result['data'] = [];
+            return $result;
         }
-        return true;
+        $result['data'] = true;
+        return $result;
     }
 }
 $USER = new User();

@@ -1,5 +1,6 @@
 <?
-  include __DIR__."/fetch.php";
+  include __DIR__."/core/js/fetch.php";
+  include __DIR__."/core/js/cookies.php";
 ?>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 

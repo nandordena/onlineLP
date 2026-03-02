@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__."/core/mainController.php";
+include_once __DIR__."/core/php/mainController.php";
 class User extends mainController {
 
     public $tab = "user";

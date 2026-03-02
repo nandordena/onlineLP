@@ -13,7 +13,7 @@
 <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 16px;">
   <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;">
     <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
-    <input type="password" name="password" placeholder="Password" required style="margin: 4px 0; width: 60%;">
+    <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
     <button type="submit" style="margin: 6px 0; width: 60%;">Login</button>
     <input type="hidden" name="adapter" value="userManager">
     <input type="hidden" name="endpoint" value="login">
@@ -21,7 +21,7 @@
   <hr style="width: 60%; margin: 16px 0 0 0; border: 0; border-top: 1px solid #ccc;">
   <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;">
     <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
-    <input type="password" name="password" placeholder="Password" required style="margin: 4px 0; width: 60%;">
+    <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="repass" placeholder="Repeat Password" required style="margin: 4px 0; width: 60%;">
     <button type="submit" style="margin: 6px 0; width: 60%;">Register</button>
     <input type="hidden" name="adapter" value="userManager">

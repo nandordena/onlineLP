@@ -133,4 +133,14 @@ class mainController {
         //TODO : Normalice result to json to asociative,
         return $this->curCall($url, $data, $method, $headers);
     }
+
+    //RESPONSE
+    public function response($message, $errors = [], $data = []) {
+        echo json_encode([
+            "message" => $message,
+            "errors" => $errors,
+            "data" => $data
+        ]);
+    }
 }
+$MAIN = new mainController();

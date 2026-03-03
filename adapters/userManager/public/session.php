@@ -10,19 +10,26 @@ class Session extends mainController {
         ,'session_key'
     ];
 
-    public function validate(){
+    public function validate($params){
         try {
+            
             if (session_status() == PHP_SESSION_NONE) {
                 session_start();
             }
-            if (!isset($_SESSION['user']) || !isset($_SESSION['sessionkey'])) {
+
+            $user = isset($params['user']) ? $params['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : null);
+            $sessionKey = isset($params['sessionKey']) ? $params['sessionKey'] : (isset($_SESSION['sessionKey']) ? $_SESSION['sessionKey'] : null);
+            $sessionId = isset($params['sessionId']) ? $params['sessionId'] : (isset($_SESSION['sessionId']) ? $_SESSION['sessionId'] : null);
+
+            if (!$user || !$sessionKey || !$sessionId) {
                 return false;
             }
 
             $result = $this->sqlFind([
                 "and"=>[
-                    "sessionkey"=>$_SESSION['sessionkey']
-                  ,"user"=>$_SESSION['user']
+                    "session_key"=>$sessionKey
+                    ,"id"=>$sessionId
+                    ,"user"=>$user
                 ]
             ]);
             return !empty($result);

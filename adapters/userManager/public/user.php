@@ -60,6 +60,21 @@ class User extends mainController {
             $insertId = $this->sqlInsert($userData);
             // Return insert id or success message
             $result['data'] = $insertId;
+            // If insertId is valid, log the user in with the same data
+            if ($insertId) {
+                global $SESSIONS;
+                $SESSIONS->createSession([
+                    'email' => $params['email'],
+                    'pass' => $params['pass']
+                ]);
+                $result['data'] = [
+                    "register" => true,
+                    "user" => $params['email'],
+                    "sessionKey" => isset($_SESSION['sessionKey']) ? $_SESSION['sessionKey'] : null,
+                    "sessionId" => isset($_SESSION['sessionId']) ? $_SESSION['sessionId'] : null,
+                    "userId" => $insertId
+                ];
+            }
             return $result;
 
         } catch (\Throwable $th) {

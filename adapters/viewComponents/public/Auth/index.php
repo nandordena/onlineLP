@@ -1,3 +1,37 @@
+<?
+session_start();
+$isSessionValid = false;
+
+// Only check session if the required fields exist
+if (isset($_SESSION['sessionId']) && isset($_SESSION['sessionKey']) && isset($_SESSION['user'])) {
+    
+    include __DIR__."/../core/php/curl.php";
+
+    $params = [
+        'sessionId' => $_SESSION['sessionId'],
+        'sessionKey' => $_SESSION['sessionKey'],
+        'user' => $_SESSION['user']
+    ];
+    $response = BerericCurl::post('userManager', 'session.validate', $params);
+    if (
+        isset($response['data']) 
+        && (
+            $response['data'] === true
+            || (is_array($response['data']) && isset($response['data']['valid']) && $response['data']['valid'])
+        )
+        && empty($response['errors'])
+    ) {
+        $isSessionValid = true;
+    }
+}
+die('HERE: ' . __FILE__ . ' @' . __LINE__ . ' | Data: ' . json_encode($response));
+if ($isSessionValid) {
+    include __DIR__."/profile.php";
+    return;
+}
+
+?>
+
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <?
   include __DIR__."/../core/js/fetch.php";
@@ -22,7 +56,7 @@
     <input type="hidden" name="endpoint" value="login">
   </form>
   <hr style="width: 60%; margin: 16px 0 0 0; border: 0; border-top: 1px solid #ccc;">
-  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;"  onEnd="auth.onRegister">
+  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;"  onEnd="auth.onLogin">
     <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
     <input type="password" name="repass" placeholder="Repeat Password" required style="margin: 4px 0; width: 60%;">

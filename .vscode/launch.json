@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Listen userManager",
+        "type": "php",
+        "request": "launch",
+        "port": 9003,
+        "pathMappings": {
+          "/var/www/html": "${workspaceFolder}/adapters/userManager/public",
+          "/var/www/html/core": "${workspaceFolder}/core"
+        }
+      }
+    ]
+  }

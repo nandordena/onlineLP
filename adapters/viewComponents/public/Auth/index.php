@@ -24,7 +24,6 @@ if (isset($_SESSION['sessionId']) && isset($_SESSION['sessionKey']) && isset($_S
         $isSessionValid = true;
     }
 }
-die('HERE: ' . __FILE__ . ' @' . __LINE__ . ' | Data: ' . json_encode($response));
 if ($isSessionValid) {
     include __DIR__."/profile.php";
     return;

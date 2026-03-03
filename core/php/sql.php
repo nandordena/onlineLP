@@ -2,6 +2,7 @@
 class Sql{
     protected $pdo;
 
+    //Conetion
     public function pdo() {
         global $_ADAPTER;
         $result = [];
@@ -25,7 +26,7 @@ class Sql{
         }
     }
 
-
+    //QUERYS
     public function query($params){
         $result = [];
         try {
@@ -119,6 +120,68 @@ class Sql{
             die();
         }
     }
+    public function delete($params) {
+        $result = [];
+        try {
+            $tab = isset($params['tab']) ? $params['tab'] : null;
+            $query = isset($params['query']) ? $params['query'] : [];
+            if (!$tab || empty($query)) {
+                $result['error'] = "Invalid delete parameters";
+                $result['data'] = [];
+                echo json_encode($result, true);
+                die();
+            }
+
+            // Build WHERE clause and parameters
+            $whereClauses = [];
+            $bindings = [];
+            foreach ($query as $column => $value) {
+                if (is_array($value) && isset($value['in'])) { //"IN" clause
+                    if (!is_array($value['in']) || empty($value['in'])) continue;
+                    $inPlaceholders = [];
+                    foreach ($value['in'] as $idx => $inVal) {
+                        $ph = ":{$column}_in_$idx";
+                        $inPlaceholders[] = $ph;
+                        $bindings["{$column}_in_$idx"] = $inVal;
+                    }
+                    $whereClauses[] = "`$column` IN (" . implode(', ', $inPlaceholders) . ")";
+                } else {
+                    $whereClauses[] = "`$column` = :$column";
+                    $bindings[$column] = $value;
+                }
+            }
+            if (empty($whereClauses)) {
+                $result['error'] = "No conditions for delete";
+                $result['data'] = [];
+                echo json_encode($result, true);
+                die();
+            }
+
+            $sql = "DELETE FROM `$tab` WHERE " . implode(' AND ', $whereClauses);
+            $pdo = $this->pdo();
+            $stmt = $pdo->prepare($sql);
+
+            foreach ($bindings as $column => $value) {
+                $stmt->bindValue(":$column", $value);
+            }
+
+            $stmt->execute();
+
+            $result['deleted_count'] = $stmt->rowCount();
+            return $result;
+
+        } catch (\Throwable $th) {
+            $result['error'] = "Delete failed: " . $th->getMessage();
+            if(getenv("ENV")=="DEV"){
+                $result['errorData'] = [
+                    'sql'=>$sql ?? null
+                ];
+            }
+            $result['data'] = [];
+            echo json_encode($result, true);
+            die();
+        }
+    }
 }
 $SQL = new Sql();
 
@@ -158,6 +221,33 @@ trait MethodsSql {
                 "tab" => $this->tab,
                 "data" => $params
             ]);
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
+    public function sqlDeleteById($ids) {
+        global $SQL;
+        try {
+            if (is_int($ids)) {
+                $ids = [$ids];
+            }
+            if (empty($ids)) {
+                $this->addError("ID array cannot be empty.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+            $deleted_count = $SQL->delete([
+                "tab" => $this->tab,
+                "query" => [
+                    "id" => ["in"=>$ids]
+                ]
+            ]);
+            $result['data'] = ["deleted_count" => $deleted_count];
+            return $result;
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
             $result['errors'] = $this->getErrors();

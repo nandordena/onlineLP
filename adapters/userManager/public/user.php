@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__."/core/mainController.php";
+include_once __DIR__."/core/php/mainController.php";
 class User extends mainController {
 
     public $tab = "user";
@@ -39,7 +39,7 @@ class User extends mainController {
             // Check if user already exists in the database
             $existingUser = $this->sqlFind([
                 "and" => [
-                    "user" => $params['user']
+                    "user" => $params['email']
                 ]
             ]);
             if (!empty($existingUser)) {
@@ -53,15 +53,80 @@ class User extends mainController {
             $hashedPassword = password_hash($params['pass'], PASSWORD_DEFAULT);
             // Prepare data to insert
             $userData = [
-                "user" => $params['user'],
+                "user" => $params['email'],
                 "pass" => $hashedPassword
             ];
             // Insert the new user
             $insertId = $this->sqlInsert($userData);
             // Return insert id or success message
             $result['data'] = $insertId;
+            // If insertId is valid, log the user in with the same data
+            if ($insertId) {
+                global $SESSIONS;
+                $SESSIONS->createSession([
+                    'email' => $params['email'],
+                    'pass' => $params['pass']
+                ]);
+                $result['data'] = [
+                    "register" => true,
+                    "user" => $params['email'],
+                    "sessionKey" => isset($_SESSION['sessionKey']) ? $_SESSION['sessionKey'] : null,
+                    "sessionId" => isset($_SESSION['sessionId']) ? $_SESSION['sessionId'] : null,
+                    "userId" => $insertId
+                ];
+            }
             return $result;
 
+        } catch (\Throwable $th) {
+            $this->addError($th->getMessage());
+            $result['errors'] = $this->getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
+    public function login($params) {
+        global $SESSIONS;
+        $result = [];
+        try {
+            // Check for required parameters
+            if (empty($params['email']) || empty($params['pass'])) {
+                $this->addError("Email and password are required.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            // Find user by email
+            $user = $this->sqlFind([
+                "and" => [
+                    "user" => $params['email']
+                ]
+            ]);
+
+            if (empty($user) || !isset($user[0]['pass'])) {
+                $this->addError("Invalid email or password.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            // Verify the password
+            if (!password_verify($params['pass'], $user[0]['pass'])) {
+                $this->addError("Invalid email or password.");
+                $result['errors'] = $this->getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            $SESSIONS->createSession($params);
+
+            $result['data'] = [
+                "login" => true,
+                "user" => $params['email'],
+                "sessionKey" => $_SESSION['sessionKey'],
+                "sessionId" => $_SESSION['sessionId'],
+            ];
+            return $result;
         } catch (\Throwable $th) {
             $this->addError($th->getMessage());
             $result['errors'] = $this->getErrors();

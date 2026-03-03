@@ -23,7 +23,6 @@
             case 'viewComponents':
                 baseUrl = '<?= getenv('VIEW_COMPONENTS');?>';
                 break;
-
             default:
                 break;
         }
@@ -70,7 +69,7 @@
         form.classList.add("loading");
 
         if (!adapter || !endpoint) {
-            alert("Error");
+            console.info("Error");
             return;
         }
 
@@ -88,19 +87,31 @@
                 if (response && response.redirect) {
                     window.location.href = response.redirect;
                 }
-                const onEndAttr = form.getAttribute('onend');
-                if (onEndAttr && typeof window[onEndAttr] === 'function') {
-                    window[onEndAttr](response);
+                const onEndAttr = form.getAttribute('onEnd');
+                if (onEndAttr) {
+                    // Support dot notation, e.g. "auth.onLogin"
+                    const func = onEndAttr.split('.').reduce((obj, key) => (obj && obj[key] ? obj[key] : undefined), window);
+                    if (typeof func === 'function') {
+                        func(e,response);
+                    }
                 }
                 if (form.classList.contains("loading")) {
                     form.classList.remove("loading");
                 }
             })
             .catch(err => {
+                const onEndAttr = form.getAttribute('onEnd');
+                if (onEndAttr) {
+                    // Support dot notation, e.g. "auth.onLogin"
+                    const func = onEndAttr.split('.').reduce((obj, key) => (obj && obj[key] ? obj[key] : undefined), window);
+                    if (typeof func === 'function') {
+                        func(e,null,err);
+                    }
+                }
                 if (form.classList.contains("loading")) {
                     form.classList.remove("loading");
                 }
-                alert("Error: " + err.message);
+                console.info("Error: " + err.message);
             });
     };
     //EVENT

@@ -1,5 +1,5 @@
 <?
-include_once __DIR__."/core/init.php";
+include_once __DIR__."/core/php/init.php";
 
 $_ADAPTER="VIEW_COMPONENTS";
 

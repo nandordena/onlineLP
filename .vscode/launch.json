@@ -2,13 +2,33 @@
     "version": "0.2.0",
     "configurations": [
       {
+        "name": "Listen controlRoom",
+        "type": "php",
+        "request": "launch",
+        "port": 9005,
+        "pathMappings": {
+          "/var/www/html/core": "${workspaceFolder}/core",
+          "/var/www/html": "${workspaceFolder}/adapters/controlRoom/public"
+        }
+      }
+      ,{
         "name": "Listen userManager",
+        "type": "php",
+        "request": "launch",
+        "port": 9004,
+        "pathMappings": {
+          "/var/www/html/core": "${workspaceFolder}/core",
+          "/var/www/html": "${workspaceFolder}/adapters/userManager/public"
+        }
+      }
+      ,{
+        "name": "Listen viewComponents",
         "type": "php",
         "request": "launch",
         "port": 9003,
         "pathMappings": {
-          "/var/www/html": "${workspaceFolder}/adapters/userManager/public",
-          "/var/www/html/core": "${workspaceFolder}/core"
+          "/var/www/html/core": "${workspaceFolder}/core",
+          "/var/www/html": "${workspaceFolder}/adapters/viewComponents/public"
         }
       }
     ]

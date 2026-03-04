@@ -17,9 +17,9 @@ class Session extends mainController {
                 session_start();
             }
 
-            $user = isset($params['user']) ? $params['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : null);
-            $sessionKey = isset($params['sessionKey']) ? $params['sessionKey'] : (isset($_SESSION['sessionKey']) ? $_SESSION['sessionKey'] : null);
-            $sessionId = isset($params['sessionId']) ? $params['sessionId'] : (isset($_SESSION['sessionId']) ? $_SESSION['sessionId'] : null);
+            $user = isset($params['user']) && $params['user'] !== 'undefined' ? $params['user'] : (isset($_SESSION['user']) ? $_SESSION['user'] : null);
+            $sessionKey = isset($params['sessionKey']) && $params['sessionKey'] !== 'undefined' ? $params['sessionKey'] : (isset($_SESSION['sessionKey']) ? $_SESSION['sessionKey'] : null);
+            $sessionId = isset($params['sessionId']) && $params['sessionId'] !== 'undefined' ? $params['sessionId'] : (isset($_SESSION['sessionId']) ? $_SESSION['sessionId'] : null);
 
             if (!$user || !$sessionKey || !$sessionId) {
                 return false;
@@ -123,4 +123,4 @@ class Session extends mainController {
         }
     }
 }
-$SESSIONS = new Session();
+$SESSION = new Session();

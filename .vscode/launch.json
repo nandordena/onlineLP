@@ -31,5 +31,11 @@
           "/var/www/html": "${workspaceFolder}/adapters/viewComponents/public"
         }
       }
+    ],
+    "compounds": [
+      {
+        "name": "All Debuggers",
+        "configurations": ["Listen controlRoom", "Listen userManager", "Listen viewComponents"]
+      }
     ]
   }

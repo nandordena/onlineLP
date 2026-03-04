@@ -40,7 +40,7 @@ switch ($uri) {
         if (in_array($uri, $sessionEndpoints)) {
             $endpoint = str_replace("session.","",$uri);
             if(method_exists($SESSION, $endpoint)){
-                $result = $SESSION->$endpoint($_REQUEST);
+                $result['data'] = $SESSION->$endpoint($_REQUEST);
                 $MAIN->response(
                     "Endpoint OK",
                     $result['errors'],

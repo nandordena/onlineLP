@@ -1,15 +1,28 @@
 <?
 class BerericCurl {
     private static function getBaseUrl($adapter) {
-        switch ($adapter) {
-            case 'userManager':
-                return getenv('USER_MANAGER');
-            case 'controlRoom':
-                return getenv('CONTROL_ROOM');
-            case 'viewComponents':
-                return getenv('VIEW_COMPONENTS');
-            default:
-                return false;
+        if(getenv('ENV')=="DEV"){
+            switch ($adapter) {
+                case 'userManager':
+                    return getenv('USER_MANAGER_DOCKER');;
+                case 'controlRoom':
+                    return getenv('CONTROL_ROOM_DOCKER');
+                case 'viewComponents':
+                    return getenv('VIEW_COMPONENTS_DOCKER');
+                default:
+                    return false;
+            }
+        }else{
+            switch ($adapter) {
+                case 'userManager':
+                    return getenv('USER_MANAGER');
+                case 'controlRoom':
+                    return getenv('CONTROL_ROOM');
+                case 'viewComponents':
+                    return getenv('VIEW_COMPONENTS');
+                default:
+                    return false;
+            }
         }
     }
     public static function post($adapter, $endpoint, $params = []) {

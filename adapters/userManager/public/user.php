@@ -1,6 +1,6 @@
 <?php
-include_once __DIR__."/core/php/mainController.php";
-class User extends mainController {
+include_once __DIR__."/core/php/MainController.php";
+class User extends MainController {
 
     public $tab = "user";
     public $inserRequired = [
@@ -12,39 +12,39 @@ class User extends mainController {
         ,'pass'
     ];
     
-    public function new($params){
+    public static function new($params){
         $result = [];
         try {
             // Error handling
             if (empty($params['email'])) {
-                $this->addError("Email cannot be empty.");
+                self::addError("Email cannot be empty.");
             }
             if (empty($params['pass'])) {
-                $this->addError("Password cannot be empty.");
+                self::addError("Password cannot be empty.");
             }
             if (empty($params['repass'])) {
-                $this->addError("Repeated password cannot be empty.");
+                self::addError("Repeated password cannot be empty.");
             }
             if ($params['pass'] !== $params['repass']) {
-                $this->addError("Passwords do not match.");
+                self::addError("Passwords do not match.");
             }
-            $this->isValidPassword($params['pass']);
+            self::isValidPassword($params['pass']);
 
             // If there are errors, return them
-            if (!empty($this->getErrors())) {
-                $result['errors'] = $this->getErrors();
+            if (!empty(self::getErrors())) {
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             // Check if user already exists in the database
-            $existingUser = $this->sqlFind([
+            $existingUser = self::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
             ]);
             if (!empty($existingUser)) {
-                $this->addError("Email already exists.");
-                $result['errors'] = $this->getErrors();
+                self::addError("Email already exists.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
@@ -57,13 +57,12 @@ class User extends mainController {
                 "pass" => $hashedPassword
             ];
             // Insert the new user
-            $insertId = $this->sqlInsert($userData);
+            $insertId = self::sqlInsert($userData);
             // Return insert id or success message
             $result['data'] = $insertId;
             // If insertId is valid, log the user in with the same data
             if ($insertId) {
-                global $SESSIONS;
-                $SESSIONS->createSession([
+                Session::createSession([
                     'email' => $params['email'],
                     'pass' => $params['pass']
                 ]);
@@ -78,47 +77,46 @@ class User extends mainController {
             return $result;
 
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
-    public function login($params) {
-        global $SESSIONS;
+    public static function login($params) {
         $result = [];
         try {
             // Check for required parameters
             if (empty($params['email']) || empty($params['pass'])) {
-                $this->addError("Email and password are required.");
-                $result['errors'] = $this->getErrors();
+                self::addError("Email and password are required.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Find user by email
-            $user = $this->sqlFind([
+            $user = self::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
             ]);
 
             if (empty($user) || !isset($user[0]['pass'])) {
-                $this->addError("Invalid email or password.");
-                $result['errors'] = $this->getErrors();
+                self::addError("Invalid email or password.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Verify the password
             if (!password_verify($params['pass'], $user[0]['pass'])) {
-                $this->addError("Invalid email or password.");
-                $result['errors'] = $this->getErrors();
+                self::addError("Invalid email or password.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
-            $SESSIONS->createSession($params);
+            Session::createSession($params);
 
             $result['data'] = [
                 "login" => true,
@@ -128,25 +126,25 @@ class User extends mainController {
             ];
             return $result;
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
-    public function validateLogin($params) {
+    public static function validateLogin($params) {
         $result = [];
         try {
             // Check for required parameters
             if (empty($params['email']) || empty($params['pass'])) {
-                $this->addError("Email and password are required.");
-                $result['errors'] = $this->getErrors();
+                self::addError("Email and password are required.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Find user by email
-            $user = $this->sqlFind([
+            $user = self::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
@@ -154,7 +152,7 @@ class User extends mainController {
 
             if (empty($user) || !isset($user[0]['pass'])) {
                 // User not found or password field missing
-                $result['errors'] = $this->getErrors();
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
@@ -165,18 +163,18 @@ class User extends mainController {
                 return $result;
             }
 
-            $result['errors'] = $this->getErrors();
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
     // Function to check if a password meets validity requirements
-    public function isValidPassword($password) {
+    public static function isValidPassword($password) {
         $result = [];
         // Example requirements, could be loaded from global or config
         $requirements = [
@@ -211,7 +209,7 @@ class User extends mainController {
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                $this->addError($err);
+                self::addError($err);
             }
             $result['errors'] = $errors;
             $result['data'] = [];
@@ -221,4 +219,4 @@ class User extends mainController {
         return $result;
     }
 }
-$USER = new User();
+

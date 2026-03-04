@@ -3,7 +3,7 @@ class Sql{
     protected $pdo;
 
     //Conetion
-    public function pdo() {
+    public static function pdo() {
         global $_ADAPTER;
         $result = [];
         try {
@@ -27,7 +27,7 @@ class Sql{
     }
 
     //QUERYS
-    public function query($params){
+    public static function query($params){
         $result = [];
         try {
             // Build a PDO query with the given params
@@ -49,7 +49,7 @@ class Sql{
 
             // Prepare SQL
             $sql = "SELECT * FROM `$tab` WHERE $whereClause";
-            $pdo = $this->pdo();
+            $pdo = self::pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -73,7 +73,7 @@ class Sql{
             die();
         }
     }
-    public function insert($params) {
+    public static function insert($params) {
         $result = [];
         try {
             $tab = isset($params['tab']) ? $params['tab'] : null;
@@ -87,8 +87,8 @@ class Sql{
 
             // Build columns and placeholders
             // Filter data to only allowed (permitted) columns
-            if (property_exists($this, 'inserPermit') && is_array($this->inserPermit)) {
-                $permittedColumns = array_flip($this->inserPermit);
+            if (property_exists(self, 'inserPermit') && is_array(self::inserPermit)) {
+                $permittedColumns = array_flip(self::inserPermit);
                 $data = array_intersect_key($data, $permittedColumns);
             }
             $columns = array_keys($data);
@@ -96,7 +96,7 @@ class Sql{
 
             // Prepare SQL
             $sql = "INSERT INTO `$tab` (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
-            $pdo = $this->pdo();
+            $pdo = self::pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -120,7 +120,7 @@ class Sql{
             die();
         }
     }
-    public function delete($params) {
+    public static function delete($params) {
         $result = [];
         try {
             $tab = isset($params['tab']) ? $params['tab'] : null;
@@ -158,7 +158,7 @@ class Sql{
             }
 
             $sql = "DELETE FROM `$tab` WHERE " . implode(' AND ', $whereClauses);
-            $pdo = $this->pdo();
+            $pdo = self::pdo();
             $stmt = $pdo->prepare($sql);
 
             foreach ($bindings as $column => $value) {
@@ -186,62 +186,62 @@ class Sql{
 $SQL = new Sql();
 
 trait MethodsSql {
-    public function sqlGet($param){
+    public static function sqlGet($param){
         global $SQL;
         try {
             return $SQL->query([
-                "tab"=>$this->$tab
+                "tab"=>self::$tab
                 ,"query"=>$param
             ]);
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
-    public function sqlFind($params){
+    public static function sqlFind($params){
         global $SQL;
         try {
             return $SQL->query([
-                "tab"=>$this->tab
+                "tab"=>self::tab
                 ,"query"=>$params
             ]);
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
-    public function sqlInsert($params){
+    public static function sqlInsert($params){
         global $SQL;
         try {
             return $SQL->insert([
-                "tab" => $this->tab,
+                "tab" => self::tab,
                 "data" => $params
             ]);
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
-    public function sqlDeleteById($ids) {
+    public static function sqlDeleteById($ids) {
         global $SQL;
         try {
             if (is_int($ids)) {
                 $ids = [$ids];
             }
             if (empty($ids)) {
-                $this->addError("ID array cannot be empty.");
-                $result['errors'] = $this->getErrors();
+                self::addError("ID array cannot be empty.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             $deleted_count = $SQL->delete([
-                "tab" => $this->tab,
+                "tab" => self::tab,
                 "query" => [
                     "id" => ["in"=>$ids]
                 ]
@@ -249,8 +249,8 @@ trait MethodsSql {
             $result['data'] = ["deleted_count" => $deleted_count];
             return $result;
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }

@@ -1,8 +1,8 @@
 <?php
-include_once __DIR__."/core/php/mainController.php";
+include_once __DIR__."/core/php/MainController.php";
 include_once __DIR__."/core/php/sql.php";
 
-class Session extends mainController {
+class Session extends MainController {
     use MethodsSql;
     public $tab = 'session';
     public $inserPermit = [
@@ -10,7 +10,7 @@ class Session extends mainController {
         ,'session_key'
     ];
 
-    public function validate($params){
+    public static function validate($params){
         try {
             
             if (session_status() == PHP_SESSION_NONE) {
@@ -25,7 +25,7 @@ class Session extends mainController {
                 return false;
             }
 
-            $result = $this->sqlFind([
+            $result = self::sqlFind([
                 "and"=>[
                     "session_key"=>$sessionKey
                     ,"id"=>$sessionId
@@ -35,18 +35,18 @@ class Session extends mainController {
             return !empty($result);
 
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            return $this->getErrors();
+            self::addError($th->getMessage());
+            return self::getErrors();
         }
     }
 
-    public function createSession($params){
+    public static function createSession($params){
         try {
             if (session_status() != PHP_SESSION_NONE) {
                 session_destroy();
             }
             session_unset();
-            $this->removeSessions($params);
+            self::removeSessions($params);
 
             session_start();
 
@@ -62,7 +62,7 @@ class Session extends mainController {
                 "user" => $user,
                 "session_key" => $sessionKey
             ];
-            $_SESSION['sessionId'] = $this->sqlInsert($insertData);
+            $_SESSION['sessionId'] = self::sqlInsert($insertData);
 
             return [
                 "user" => $_SESSION['user']
@@ -74,23 +74,23 @@ class Session extends mainController {
                 session_destroy();
             }
             session_unset();
-            $this->addError($th->getMessage());
-            return $this->getErrors();
+            self::addError($th->getMessage());
+            return self::getErrors();
         }
     }
     
-    public function removeSessions($params) {
+    public static function removeSessions($params) {
         $result = [];
         $user = $params['email'];
         try {
             if (empty($user)) {
-                $this->addError("User cannot be empty.");
-                $result['errors'] = $this->getErrors();
+                self::addError("User cannot be empty.");
+                $result['errors'] = self::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             
-            $existing = $this->sqlFind([
+            $existing = self::sqlFind([
                 "and" => [
                     "user" => $user
                 ]
@@ -104,7 +104,7 @@ class Session extends mainController {
                 }
             }
             if (!empty($sessionIds)) {
-                $stmt = $this->sqlDeleteById($sessionIds);
+                $stmt = self::sqlDeleteById($sessionIds);
                 $deletedCount = $stmt->rowCount();
             } else {
                 $deletedCount = 0;
@@ -116,11 +116,10 @@ class Session extends mainController {
             ];
             return $result;
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            $result['errors'] = $this->getErrors();
+            self::addError($th->getMessage());
+            $result['errors'] = self::getErrors();
             $result['data'] = [];
             return $result;
         }
     }
 }
-$SESSION = new Session();

@@ -27,10 +27,10 @@ switch ($uri) {
     default:{
         if (
             in_array($uri, $userEndpoints)
-            && method_exists($USER, $uri)
+            && method_exists("User", $uri)
         ) {
-            $result = $USER->$uri($_REQUEST);
-            $MAIN->response(
+            $result = User::$uri($_REQUEST);
+            MainController::response(
                 "Endpoint OK",
                 $result['errors'],
                 $result['data']
@@ -39,9 +39,9 @@ switch ($uri) {
         }
         if (in_array($uri, $sessionEndpoints)) {
             $endpoint = str_replace("session.","",$uri);
-            if(method_exists($SESSION, $endpoint)){
-                $result['data'] = $SESSION->$endpoint($_REQUEST);
-                $MAIN->response(
+            if(method_exists("Session", $endpoint)){
+                $result['data'] = Session::$endpoint($_REQUEST);
+                MainController::response(
                     "Endpoint OK",
                     $result['errors'],
                     $result['data']

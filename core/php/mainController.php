@@ -1,63 +1,63 @@
 <?php
 include_once __DIR__."/sql.php";
 
-class mainController {
+class MainController {
     use MethodsSql;
     
-    protected $errors = [];
+    protected static $errors = [];
 
     // Error handler
-    public function addError($message) {
-        $this->errors[] = $message;
+    public static function addError($message) {
+        self::$errors[] = $message;
     }
-    public function getErrors() {
-        return $this->errors;
+    public static function getErrors() {
+        return self::$errors;
     }
-    public function hasErrors() {
-        return !empty($this->errors);
+    public static function hasErrors() {
+        return !empty(self::$errors);
     }
 
     //MODEL
-    public function insert($params) {
+    public static function insert($params) {
         try {
             // Handle required fields as per child (e.g., 'user' => 'email', 'pass' => 'pass')
-            if (property_exists($this, 'inserRequired')) {
-                foreach ($this->inserRequired as $key => $alias) {
+            if (property_exists(self, 'inserRequired')) {
+                foreach (self::inserRequired as $key => $alias) {
                     // If defined as KEY=>VAL, use the field in $params by key or by value
                     $field = is_int($key) ? $alias : $key;
                     if (empty($params[$field])) {
-                        $this->addError("Field '{$field}' is required.");
+                        self::addError("Field '{$field}' is required.");
                     }
                     // Switch on field for type-specific validation logic
                     switch ($field) {
                         case 'email':
                             if (!filter_var($params[$field], FILTER_VALIDATE_EMAIL)) {
-                                $this->addError("Field '{$field}' must be a valid email.");
+                                self::addError("Field '{$field}' must be a valid email.");
                             }
                             break;
                         case 'string':
                             if (!is_string($params[$field]) || strlen(trim($params[$field])) === 0) {
-                                $this->addError("Field '{$field}' must be a non-empty string.");
+                                self::addError("Field '{$field}' must be a non-empty string.");
                             }
                             break;
                     }
                 }
             }
-            if (!empty($this->getErrors())) {
-                return $this->getErrors();
+            if (!empty(self::getErrors())) {
+                return self::getErrors();
             }
             // Use sqlInsert from MethodsSql trait
-            $insertId = $this->sqlInsert($params);
-            $this->success[] = $insertId;
+            $insertId = self::sqlInsert($params);
+            self::$success[] = $insertId;
             return $insertId;
         } catch (\Throwable $th) {
-            $this->addError($th->getMessage());
-            return $this->getErrors();
+            self::addError($th->getMessage());
+            return self::getErrors();
         }
     }
 
     //CURL
-    public function curlCall($url, $data = [], $method = 'POST', $headers = []){
+    public static function curlCall($url, $data = [], $method = 'POST', $headers = []){
         $ch = curl_init();
 
         // Detect if URL is absolute or a local script (relative path)
@@ -97,9 +97,9 @@ class mainController {
 
         $response = curl_exec($ch);
         if ($response === false) {
-            $this->addError('Curl error: ' . curl_error($ch));
+            self::addError('Curl error: ' . curl_error($ch));
             curl_close($ch);
-            return $this->getErrors();
+            return self::getErrors();
         }
         curl_close($ch);
 
@@ -107,7 +107,7 @@ class mainController {
         $decoded = json_decode($response, true);
         return $decoded !== null ? $decoded : $response;
     }
-    public function callAdapter($adapterName, $endpoint, $data = [], $method = 'POST', $headers = []) {
+    public static function callAdapter($adapterName, $endpoint, $data = [], $method = 'POST', $headers = []) {
         global $_ADAPTER;
         if($_ADAPTER == $adapterName){
             //TODO : Use this->
@@ -122,8 +122,8 @@ class mainController {
             $baseUrl = $GLOBALS[$adapterName];
         }
         if (!$baseUrl) {
-            $this->addError("Adapter base URL for '$adapterName' not found in environment.");
-            return $this->getErrors();
+            self::addError("Adapter base URL for '$adapterName' not found in environment.");
+            return self::getErrors();
         }
 
         // Normalize/concatenate URL
@@ -131,11 +131,11 @@ class mainController {
         $url = rtrim($baseUrl, '/') . '/' . $endpoint;
 
         //TODO : Normalice result to json to asociative,
-        return $this->curCall($url, $data, $method, $headers);
+        return self::curCall($url, $data, $method, $headers);
     }
 
     //RESPONSE
-    public function response($message, $errors = [], $data = []) {
+    public static function response($message, $errors = [], $data = []) {
         echo json_encode([
             "message" => $message,
             "errors" => $errors,
@@ -143,4 +143,3 @@ class mainController {
         ]);
     }
 }
-$MAIN = new mainController();

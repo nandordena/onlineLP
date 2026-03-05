@@ -4,8 +4,8 @@ include_once __DIR__."/core/php/sql.php";
 
 class Session extends MainController {
     use MethodsSql;
-    public $tab = 'session';
-    public $inserPermit = [
+    public static $tab = 'session';
+    public static $inserPermit = [
         'user'
         ,'session_key'
     ];
@@ -25,7 +25,7 @@ class Session extends MainController {
                 return false;
             }
 
-            $result = self::sqlFind([
+            $result = static::sqlFind([
                 "and"=>[
                     "session_key"=>$sessionKey
                     ,"id"=>$sessionId
@@ -35,8 +35,8 @@ class Session extends MainController {
             return !empty($result);
 
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            return self::getErrors();
+            static::addError($th->getMessage());
+            return static::getErrors();
         }
     }
 
@@ -46,7 +46,7 @@ class Session extends MainController {
                 session_destroy();
             }
             session_unset();
-            self::removeSessions($params);
+            static::removeSessions($params);
 
             session_start();
 
@@ -62,7 +62,7 @@ class Session extends MainController {
                 "user" => $user,
                 "session_key" => $sessionKey
             ];
-            $_SESSION['sessionId'] = self::sqlInsert($insertData);
+            $_SESSION['sessionId'] = static::sqlInsert($insertData);
 
             return [
                 "user" => $_SESSION['user']
@@ -74,8 +74,8 @@ class Session extends MainController {
                 session_destroy();
             }
             session_unset();
-            self::addError($th->getMessage());
-            return self::getErrors();
+            static::addError($th->getMessage());
+            return static::getErrors();
         }
     }
     
@@ -84,13 +84,13 @@ class Session extends MainController {
         $user = $params['email'];
         try {
             if (empty($user)) {
-                self::addError("User cannot be empty.");
-                $result['errors'] = self::getErrors();
+                static::addError("User cannot be empty.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             
-            $existing = self::sqlFind([
+            $existing = static::sqlFind([
                 "and" => [
                     "user" => $user
                 ]
@@ -104,7 +104,7 @@ class Session extends MainController {
                 }
             }
             if (!empty($sessionIds)) {
-                $stmt = self::sqlDeleteById($sessionIds);
+                $stmt = static::sqlDeleteById($sessionIds);
                 $deletedCount = $stmt->rowCount();
             } else {
                 $deletedCount = 0;
@@ -116,8 +116,8 @@ class Session extends MainController {
             ];
             return $result;
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }

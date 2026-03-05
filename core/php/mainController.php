@@ -8,51 +8,51 @@ class MainController {
 
     // Error handler
     public static function addError($message) {
-        self::$errors[] = $message;
+        static::$errors[] = $message;
     }
     public static function getErrors() {
-        return self::$errors;
+        return static::$errors;
     }
     public static function hasErrors() {
-        return !empty(self::$errors);
+        return !empty(static::$errors);
     }
 
     //MODEL
     public static function insert($params) {
         try {
             // Handle required fields as per child (e.g., 'user' => 'email', 'pass' => 'pass')
-            if (property_exists(self, 'inserRequired')) {
-                foreach (self::inserRequired as $key => $alias) {
+            if (property_exists(get_called_class(), 'inserRequired')) {
+                foreach (static::inserRequired as $key => $alias) {
                     // If defined as KEY=>VAL, use the field in $params by key or by value
                     $field = is_int($key) ? $alias : $key;
                     if (empty($params[$field])) {
-                        self::addError("Field '{$field}' is required.");
+                        static::addError("Field '{$field}' is required.");
                     }
                     // Switch on field for type-specific validation logic
                     switch ($field) {
                         case 'email':
                             if (!filter_var($params[$field], FILTER_VALIDATE_EMAIL)) {
-                                self::addError("Field '{$field}' must be a valid email.");
+                                static::addError("Field '{$field}' must be a valid email.");
                             }
                             break;
                         case 'string':
                             if (!is_string($params[$field]) || strlen(trim($params[$field])) === 0) {
-                                self::addError("Field '{$field}' must be a non-empty string.");
+                                static::addError("Field '{$field}' must be a non-empty string.");
                             }
                             break;
                     }
                 }
             }
-            if (!empty(self::getErrors())) {
-                return self::getErrors();
+            if (!empty(static::getErrors())) {
+                return static::getErrors();
             }
             // Use sqlInsert from MethodsSql trait
-            $insertId = self::sqlInsert($params);
-            self::$success[] = $insertId;
+            $insertId = static::sqlInsert($params);
+            static::$success[] = $insertId;
             return $insertId;
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            return self::getErrors();
+            static::addError($th->getMessage());
+            return static::getErrors();
         }
     }
 
@@ -97,9 +97,9 @@ class MainController {
 
         $response = curl_exec($ch);
         if ($response === false) {
-            self::addError('Curl error: ' . curl_error($ch));
+            static::addError('Curl error: ' . curl_error($ch));
             curl_close($ch);
-            return self::getErrors();
+            return static::getErrors();
         }
         curl_close($ch);
 
@@ -122,8 +122,8 @@ class MainController {
             $baseUrl = $GLOBALS[$adapterName];
         }
         if (!$baseUrl) {
-            self::addError("Adapter base URL for '$adapterName' not found in environment.");
-            return self::getErrors();
+            static::addError("Adapter base URL for '$adapterName' not found in environment.");
+            return static::getErrors();
         }
 
         // Normalize/concatenate URL
@@ -131,7 +131,7 @@ class MainController {
         $url = rtrim($baseUrl, '/') . '/' . $endpoint;
 
         //TODO : Normalice result to json to asociative,
-        return self::curCall($url, $data, $method, $headers);
+        return static::curCall($url, $data, $method, $headers);
     }
 
     //RESPONSE

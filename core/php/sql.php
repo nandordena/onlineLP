@@ -49,7 +49,7 @@ class Sql{
 
             // Prepare SQL
             $sql = "SELECT * FROM `$tab` WHERE $whereClause";
-            $pdo = self::pdo();
+            $pdo = static::pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -87,8 +87,8 @@ class Sql{
 
             // Build columns and placeholders
             // Filter data to only allowed (permitted) columns
-            if (property_exists(self, 'inserPermit') && is_array(self::inserPermit)) {
-                $permittedColumns = array_flip(self::inserPermit);
+            if (property_exists(get_called_class(), 'inserPermit') && is_array(static::inserPermit)) {
+                $permittedColumns = array_flip(static::inserPermit);
                 $data = array_intersect_key($data, $permittedColumns);
             }
             $columns = array_keys($data);
@@ -96,7 +96,7 @@ class Sql{
 
             // Prepare SQL
             $sql = "INSERT INTO `$tab` (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
-            $pdo = self::pdo();
+            $pdo = static::pdo();
             $stmt = $pdo->prepare($sql);
 
             // Bind values
@@ -158,7 +158,7 @@ class Sql{
             }
 
             $sql = "DELETE FROM `$tab` WHERE " . implode(' AND ', $whereClauses);
-            $pdo = self::pdo();
+            $pdo = static::pdo();
             $stmt = $pdo->prepare($sql);
 
             foreach ($bindings as $column => $value) {
@@ -190,12 +190,12 @@ trait MethodsSql {
         global $SQL;
         try {
             return $SQL->query([
-                "tab"=>self::$tab
+                "tab"=>static::$tab
                 ,"query"=>$param
             ]);
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -204,12 +204,12 @@ trait MethodsSql {
         global $SQL;
         try {
             return $SQL->query([
-                "tab"=>self::tab
+                "tab"=>static::$tab
                 ,"query"=>$params
             ]);
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -218,12 +218,12 @@ trait MethodsSql {
         global $SQL;
         try {
             return $SQL->insert([
-                "tab" => self::tab,
+                "tab" => static::$tab,
                 "data" => $params
             ]);
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -235,13 +235,13 @@ trait MethodsSql {
                 $ids = [$ids];
             }
             if (empty($ids)) {
-                self::addError("ID array cannot be empty.");
-                $result['errors'] = self::getErrors();
+                static::addError("ID array cannot be empty.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             $deleted_count = $SQL->delete([
-                "tab" => self::tab,
+                "tab" => static::$tab,
                 "query" => [
                     "id" => ["in"=>$ids]
                 ]
@@ -249,8 +249,8 @@ trait MethodsSql {
             $result['data'] = ["deleted_count" => $deleted_count];
             return $result;
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }

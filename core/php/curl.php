@@ -26,7 +26,7 @@ class BerericCurl {
         }
     }
     public static function post($adapter, $endpoint, $params = []) {
-        $baseUrl = self::getBaseUrl($adapter);
+        $baseUrl = static::getBaseUrl($adapter);
         if (!$baseUrl) {
             return [
                 'errors' => ["Unknown adapter or base URL not set for adapter: $adapter"],

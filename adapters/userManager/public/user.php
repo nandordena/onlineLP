@@ -2,12 +2,12 @@
 include_once __DIR__."/core/php/MainController.php";
 class User extends MainController {
 
-    public $tab = "user";
-    public $inserRequired = [
+    public static $tab = "user";
+    public static $inserRequired = [
         'user'=>'email'
         ,'pass'=>'string'
     ];
-    public $inserPermit = [
+    public static $inserPermit = [
         'user'
         ,'pass'
     ];
@@ -17,34 +17,34 @@ class User extends MainController {
         try {
             // Error handling
             if (empty($params['email'])) {
-                self::addError("Email cannot be empty.");
+                static::addError("Email cannot be empty.");
             }
             if (empty($params['pass'])) {
-                self::addError("Password cannot be empty.");
+                static::addError("Password cannot be empty.");
             }
             if (empty($params['repass'])) {
-                self::addError("Repeated password cannot be empty.");
+                static::addError("Repeated password cannot be empty.");
             }
             if ($params['pass'] !== $params['repass']) {
-                self::addError("Passwords do not match.");
+                static::addError("Passwords do not match.");
             }
-            self::isValidPassword($params['pass']);
+            static::isValidPassword($params['pass']);
 
             // If there are errors, return them
-            if (!empty(self::getErrors())) {
-                $result['errors'] = self::getErrors();
+            if (!empty(static::getErrors())) {
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
             // Check if user already exists in the database
-            $existingUser = self::sqlFind([
+            $existingUser = static::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
             ]);
             if (!empty($existingUser)) {
-                self::addError("Email already exists.");
-                $result['errors'] = self::getErrors();
+                static::addError("Email already exists.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
@@ -57,7 +57,7 @@ class User extends MainController {
                 "pass" => $hashedPassword
             ];
             // Insert the new user
-            $insertId = self::sqlInsert($userData);
+            $insertId = static::sqlInsert($userData);
             // Return insert id or success message
             $result['data'] = $insertId;
             // If insertId is valid, log the user in with the same data
@@ -77,8 +77,8 @@ class User extends MainController {
             return $result;
 
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -88,30 +88,30 @@ class User extends MainController {
         try {
             // Check for required parameters
             if (empty($params['email']) || empty($params['pass'])) {
-                self::addError("Email and password are required.");
-                $result['errors'] = self::getErrors();
+                static::addError("Email and password are required.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Find user by email
-            $user = self::sqlFind([
+            $user = static::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
             ]);
 
             if (empty($user) || !isset($user[0]['pass'])) {
-                self::addError("Invalid email or password.");
-                $result['errors'] = self::getErrors();
+                static::addError("Invalid email or password.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Verify the password
             if (!password_verify($params['pass'], $user[0]['pass'])) {
-                self::addError("Invalid email or password.");
-                $result['errors'] = self::getErrors();
+                static::addError("Invalid email or password.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
@@ -126,8 +126,8 @@ class User extends MainController {
             ];
             return $result;
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -137,14 +137,14 @@ class User extends MainController {
         try {
             // Check for required parameters
             if (empty($params['email']) || empty($params['pass'])) {
-                self::addError("Email and password are required.");
-                $result['errors'] = self::getErrors();
+                static::addError("Email and password are required.");
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
 
             // Find user by email
-            $user = self::sqlFind([
+            $user = static::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]
@@ -152,7 +152,7 @@ class User extends MainController {
 
             if (empty($user) || !isset($user[0]['pass'])) {
                 // User not found or password field missing
-                $result['errors'] = self::getErrors();
+                $result['errors'] = static::getErrors();
                 $result['data'] = [];
                 return $result;
             }
@@ -163,12 +163,12 @@ class User extends MainController {
                 return $result;
             }
 
-            $result['errors'] = self::getErrors();
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         } catch (\Throwable $th) {
-            self::addError($th->getMessage());
-            $result['errors'] = self::getErrors();
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
             $result['data'] = [];
             return $result;
         }
@@ -209,7 +209,7 @@ class User extends MainController {
 
         if (!empty($errors)) {
             foreach ($errors as $err) {
-                self::addError($err);
+                static::addError($err);
             }
             $result['errors'] = $errors;
             $result['data'] = [];

@@ -234,6 +234,110 @@ class User extends MainController {
             return $result;
         }
     }
+    public static function googleAuth($params) {
+        $result = [];
+        try {
+            if (empty($params['credential'])) {
+                static::addError("Google authentication credential is required.");
+                $result['errors'] = static::getErrors();
+                $result['data'] = [];
+                return $result;
+            }
 
+            $googleUser = static::verifyGoogleCredential($params['credential']);
+            
+            if (!$googleUser || empty($googleUser['email']) || empty($googleUser['sub']) ) {
+                static::addError("Invalid Google credential.");
+                $result['errors'] = static::getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+            if($googleUser['email_verified'] !== true){
+                static::addError("Google email not verified.");
+                $result['errors'] = static::getErrors();
+                $result['data'] = [];
+                return $result;
+            }
+
+            $user = static::sqlFind([
+                "and" => ["user" => $googleUser['email']]
+            ]);
+
+            if (empty($user)) {
+                $userData = [
+                    "user" => $googleUser['email']
+                    ,"pass" => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT)
+                    ,"googleAuth" => $googleUser['sub']
+                ];
+                $insertId = static::sqlInsert($userData);
+            } else {
+                if (!empty($user[0]['googleAuth']) && $user[0]['googleAuth'] !== $googleUser['sub']) {
+                    static::addError("Google account mismatch.");
+                    $result['errors'] = static::getErrors();
+                    $result['data'] = [];
+                    return $result;
+                }
+                $insertId = $user[0]['id'];
+                if (empty($user[0]['googleAuth'])) {
+                    static::sqlUpdate(
+                        ["googleAuth" => $googleUser['sub']]
+                        ,$insertId
+                    );
+                }
+            }
+
+            // Create session
+            Session::createSession(['email' => $googleUser['email']]);
+            $result['data'] = [
+                "user" => $googleUser['email'],
+                "sessionKey" => $_SESSION['sessionKey'],
+                "sessionId" => $_SESSION['sessionId'],
+                "userId" => $insertId
+            ];
+            $result["message"] = "Google authentication successful.";
+            return $result;
+        } catch (\Throwable $th) {
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
+    private static function verifyGoogleCredential($credential) {
+        $parts = explode('.', $credential);
+        if (count($parts) !== 3) {
+            static::addError("Invalid token format.");
+            return false;
+        }
+
+        $header = json_decode(static::base64UrlDecode($parts[0]), true);
+        $payload = json_decode(static::base64UrlDecode($parts[1]), true);
+
+        if (!$payload) {
+            static::addError("Invalid token payload.");
+            return false;
+        }
+
+        if (isset($payload['exp']) && $payload['exp'] < time()) {
+            static::addError("Token has expired.");
+            return false;
+        }
+
+        if (empty($payload['email']) || !isset($payload['email_verified'])) {
+            static::addError("Required fields missing from token.");
+            return false;
+        }
+
+        return [
+            'email' => $payload['email'],
+            'email_verified' => $payload['email_verified'],
+            'sub' => $payload['sub'] ?? null
+        ];
+    }
+
+    private static function base64UrlDecode($data) {
+        $data = str_replace(['-', '_'], ['+', '/'], $data);
+        return base64_decode($data);
+    }
 }
 

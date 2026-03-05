@@ -50,8 +50,24 @@
         app.setCookie('user',response.data.user,7);
         return true;
     }
-    window.Auth.prototype.onGoogleAuth = function(e,response,error) {
-        console.log("JWT:", response.credential);
+    window.Auth.prototype.onGoogleAuth = function(response) {
+        const e = {target: document.getElementById('g_id_onload')};
+        app.fetch('userManager','googleAuth',{
+                credential: response.credential
+                ,adapter: 'userManager'
+                ,endpoint: 'googleAuth'
+            }
+        ).then(data => {
+            if(!auth.errorForm(e,data)){
+                if(auth.setSessionCookies(data)){
+                    window.location.reload();
+                }else{
+                    e.target.setAttribute('data-error', 'Session error: unable to set session cookies. Pleace try login');
+                }
+            }
+        }).catch(err => {
+            e.target.setAttribute('data-error', 'Network error: ' + err.message);
+        });
     }
     function handleCredentialResponse(response) {
         auth.onGoogleAuth(response);

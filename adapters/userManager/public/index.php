@@ -15,6 +15,7 @@ $userEndpoints = [
     "new"
     ,"login"
     ,"logout"
+    ,"googleAuth"
 ];
 switch ($uri) {
     case '':

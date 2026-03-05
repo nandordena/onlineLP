@@ -182,6 +182,63 @@ class Sql{
             die();
         }
     }
+    public static function update($params) {
+        $result = [];
+        try {
+            $tab = isset($params['tab']) ? $params['tab'] : null;
+            $data = isset($params['data']) ? $params['data'] : [];
+            $conditions = isset($params['query']) ? $params['query'] : [];
+            
+            if (!$tab || empty($data) || empty($conditions)) {
+                $result['error'] = "Invalid update parameters";
+                $result['data'] = [];
+                echo json_encode($result, true);
+                die();
+            }
+
+            if (property_exists(get_called_class(), 'insertPermit') && is_array(static::insertPermit)) {
+                $permittedColumns = array_flip(static::insertPermit);
+                $data = array_intersect_key($data, $permittedColumns);
+            }
+
+            $setClause = implode(', ', array_map(function($col) { return "`$col` = :$col"; }, array_keys($data)));
+
+            $whereClauses = [];
+            foreach ($conditions as $column => $value) {
+                $whereClauses[] = "`$column` = :where_$column";
+            }
+            $whereClause = implode(' AND ', $whereClauses);
+
+            $sql = "UPDATE `$tab` SET $setClause WHERE $whereClause";
+            $pdo = static::pdo();
+            $stmt = $pdo->prepare($sql);
+
+            foreach ($data as $column => $value) {
+                $stmt->bindValue(":$column", $value);
+            }
+
+            foreach ($conditions as $column => $value) {
+                $stmt->bindValue(":where_$column", $value);
+            }
+
+            $stmt->execute();
+
+            $result['updated_count'] = $stmt->rowCount();
+            return $result;
+
+        } catch (\Throwable $th) {
+            $result['error'] = "Update failed: " . $th->getMessage();
+            if(getenv("ENV")=="DEV"){
+                $result['errorData'] = [
+                    'sql'=>$sql ?? null
+                ];
+            }
+            $result['data'] = [];
+            echo json_encode($result, true);
+            die();
+        }
+    }
+
 }
 $SQL = new Sql();
 
@@ -248,6 +305,23 @@ trait MethodsSql {
             ]);
             $result['data'] = ["deleted_count" => $deleted_count];
             return $result;
+        } catch (\Throwable $th) {
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
+    public static function sqlUpdate($data,$ids){
+        global $SQL;
+        try {
+            return $SQL->update([
+                "tab" => static::$tab,
+                "data" => $data,
+                "query" => [
+                    "id" => ["in"=>$ids]
+                ]
+            ]);
         } catch (\Throwable $th) {
             static::addError($th->getMessage());
             $result['errors'] = static::getErrors();

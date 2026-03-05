@@ -122,4 +122,28 @@ class Session extends MainController {
             return $result;
         }
     }
+
+    public static function destroySession() {
+        $result = [];
+        try {
+            if (session_status() == PHP_SESSION_NONE) {
+                session_start();
+            }
+            $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+            if ($user) {
+                static::removeSessions(['email' => $user]);
+            }
+            session_destroy();
+            session_unset();
+            $result['data'] = [
+                "logout" => true
+            ];
+            return $result;
+        } catch (\Throwable $th) {
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
 }

@@ -1,8 +1,48 @@
 <?php
 // Display user profile section with icon, username, and logout button
-$userEmail = $_SESSION['user'] ?? 'User';
+$userEmail = $_COOKIE['user'] ?? 'User';
 $username = explode('@', $userEmail)[0];
 ?>
+
+<style>
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+    .profile-container .profile-card {
+        text-align: center;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f5f5f5;
+    }
+    .profile-container .user-icon {
+        margin-bottom: 15px;
+    }
+    .profile-container .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+    }
+    .profile-container .username {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 10px 0;
+    }
+    .profile-container .logout-btn {
+        padding: 10px 20px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .profile-container .logout-btn:hover {
+        background-color: #c82333;
+    }
+</style>
 
 <div class="profile-container">
     <div class="profile-card">
@@ -11,7 +51,7 @@ $username = explode('@', $userEmail)[0];
                  alt="User Avatar" class="avatar">
         </div>
         <p class="username"><?php echo htmlspecialchars($username); ?></p>
-        <form class="fetchform" method="POST" onEnd="auth.onLogin">
+        <form class="fetchform" method="POST" onEnd="auth.onLogout">
             <button type="submit" class="logout-btn">Log Out</button>
             <input type="hidden" name="adapter" value="userManager">
             <input type="hidden" name="endpoint" value="logout">
@@ -19,49 +59,3 @@ $username = explode('@', $userEmail)[0];
         </form>
     </div>
 </div>
-
-<style>
-.profile-container {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-.profile-card {
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #f5f5f5;
-}
-
-.user-icon {
-    margin-bottom: 15px;
-}
-
-.avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid #ddd;
-}
-
-.username {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 10px 0;
-}
-
-.logout-btn {
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.logout-btn:hover {
-    background-color: #c82333;
-}
-</style>

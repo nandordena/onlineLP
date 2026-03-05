@@ -173,7 +173,6 @@ class User extends MainController {
             return $result;
         }
     }
-    // Function to check if a password meets validity requirements
     public static function isValidPassword($password) {
         $result = [];
         // Example requirements, could be loaded from global or config
@@ -218,5 +217,23 @@ class User extends MainController {
         $result['data'] = true;
         return $result;
     }
+    public static function logout($params) {
+        $result = [];
+        try {
+            Session::destroySession();
+            
+            $result['data'] = [
+                "logout" => true,
+                "message" => "Successfully logged out."
+            ];
+            return $result;
+        } catch (\Throwable $th) {
+            static::addError($th->getMessage());
+            $result['errors'] = static::getErrors();
+            $result['data'] = [];
+            return $result;
+        }
+    }
+
 }
 

@@ -21,6 +21,15 @@
             }
         }
     }
+    window.Auth.prototype.onLogout = function(e,response,error){
+        const form = e.target;
+        if(!auth.errorForm(e,response)){
+            app.removeCookie('sessionId');
+            app.removeCookie('sessionKey');
+            app.removeCookie('user');
+            window.location.reload();
+        }
+    }
     window.Auth.prototype.errorForm = function(e,response) {
         const form = e.target;
         form.setAttribute('data-error','');
@@ -36,9 +45,9 @@
         if (!response || !response.data || !response.data.sessionId || !response.data.sessionKey || !response.data.user) {
             return false;
         }
-        app.setCookie('sessionId',response.sessionId,7);
-        app.setCookie('sessionKey',response.sessionKey,7);
-        app.setCookie('user',response.user,7);
+        app.setCookie('sessionId',response.data.sessionId,7);
+        app.setCookie('sessionKey',response.data.sessionKey,7);
+        app.setCookie('user',response.data.user,7);
         return true;
     }
     window.Auth.prototype.onGoogleAuth = function(e,response,error) {

@@ -29,10 +29,6 @@ if (
         $isSessionValid = true;
     }
 }
-if ($isSessionValid) {
-    include __DIR__."/profile.php";
-    return;
-}
 
 ?>
 
@@ -42,6 +38,13 @@ if ($isSessionValid) {
   include __DIR__."/../core/js/cookies.php";
   include __DIR__."/auth.js.php";
   include __DIR__."/auth.css.php";
+?>
+
+<?  
+if ($isSessionValid) {
+    include __DIR__."/profile.php";
+    return;
+}
 ?>
 
 <div id="g_id_onload"

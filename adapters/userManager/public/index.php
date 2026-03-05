@@ -14,6 +14,7 @@ $sessionEndpoints = [
 $userEndpoints = [
     "new"
     ,"login"
+    ,"logout"
 ];
 switch ($uri) {
     case '':

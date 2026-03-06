@@ -1,7 +1,13 @@
-FROM php:8.3-apache
-WORKDIR /var/www/html
-RUN docker-php-ext-install pdo pdo_mysql
-RUN a2enmod rewrite
-COPY infrastructure/apache/vhost.cfg /etc/apache2/sites-available/000-default.conf
-RUN pecl install xdebug \
- && docker-php-ext-enable xdebug
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install -g npm@11.11.0
+
+RUN npm install --save-dev @angular/cli
+RUN npm install --save-dev @angular-devkit/build-angular
+
+COPY . .
+
+CMD ["ng","serve","--host","0.0.0.0","--port","4200"]

@@ -29,20 +29,22 @@ services:
       - ../../infrastructure/.env
     depends_on:
       - mysql
+
+  #angular, fault of @fersuits
   view_components:
     build:
-      context: ../../
-      dockerfile: adapters/viewComponents/Dockerfile
+      context: ../../adapters/viewComponents
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "4200:4200"
     volumes:
-      - ../../core:/var/www/html/core
-      - ../../adapters/viewComponents/public:/var/www/html
-      - ../../adapters/viewComponents/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ../../adapters/viewComponents/public:/app
     env_file:
       - ../../infrastructure/.env
+    command: tail -f /dev/null
     depends_on:
-      - mysql
+      - user_manager
+      - control_room
   mysql:
     image: mysql:8.0
     container_name: mysql_server

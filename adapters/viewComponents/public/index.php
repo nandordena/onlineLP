@@ -11,7 +11,7 @@ switch ($uri) {
         break;
 
     case 'auth':
-        include_once __DIR__."/auth/index.php";
+        include_once __DIR__."/ui/components/auth/index.php";
         break;
 
     default:

@@ -1,3 +1,8 @@
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<?
+  include __DIR__."/../core/js/fetch.php";
+  include __DIR__."/../core/js/cookies.php";
+?>
 <script>
     if (typeof window.App === "undefined" || typeof window.App !== "function") {
         window.App = class App {};

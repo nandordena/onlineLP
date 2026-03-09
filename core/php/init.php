@@ -36,3 +36,6 @@ if ($env === 'DEV') {
     ini_set('realpath_cache_size', '0');
     ini_set('realpath_cache_ttl', '0');
 }
+
+//PERSONAL VALUES
+static $BASEDIR = $_SERVER['DOCUMENT_ROOT'];

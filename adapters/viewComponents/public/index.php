@@ -1,5 +1,7 @@
 <?
 include_once __DIR__."/core/php/init.php";
+include_once $BASEDIR."/commons/functions.php";
+include_once $BASEDIR."/commons/mainStyle.php";
 
 $_ADAPTER="VIEW_COMPONENTS";
 
@@ -7,11 +9,12 @@ $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 switch ($uri) {
     case '':
-        echo 'Home';
+    case 'home':
+        include_once $BASEDIR."/app/web/index.php";
         break;
 
     case 'auth':
-        include_once __DIR__."/ui/components/auth/index.php";
+        include_once $BASEDIR."/ui/components/auth/index.php";
         break;
 
     default:

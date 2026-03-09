@@ -1,10 +1,3 @@
-<?  
-if ($isSessionValid) {
-    include __DIR__."/profile.php";
-    return;
-}
-?>
-
 <div id="g_id_onload"
      data-client_id="<?=getenv('googleClientId')?>.apps.googleusercontent.com"
      data-callback="handleCredentialResponse"

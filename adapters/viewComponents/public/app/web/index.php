@@ -9,7 +9,7 @@ if (
     (isset($_SESSION['user']) || isset($_COOKIE['user']))
 ) {
     
-    include __DIR__."/../core/php/curl.php";
+    include $BASEDIR."/core/php/curl.php";
 
     $params = [
         'sessionId'   => $_SESSION['sessionId']   ?? $_COOKIE['sessionId']   ?? null,

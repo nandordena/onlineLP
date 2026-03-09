@@ -1,9 +1,9 @@
 <?php
-include_once __DIR__."/core/php/init.php";
+include_once $BASEDIR."/core/php/init.php";
 
 $_ADAPTER="CONTROL_ROOM";
 
-include_once __DIR__."/controlRoom.php";
+include_once $BASEDIR."/controlRoom.php";
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 

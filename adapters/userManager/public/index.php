@@ -3,8 +3,8 @@ include_once __DIR__."/core/php/init.php";
 
 $_ADAPTER="USER_MANAGER";
 
-include_once __DIR__."/user.php";
-include_once __DIR__."/session.php";
+include_once $BASEDIR."/user.php";
+include_once $BASEDIR."/session.php";
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 

@@ -240,13 +240,11 @@ class Sql{
     }
 
 }
-$SQL = new Sql();
 
 trait MethodsSql {
     public static function sqlGet($param){
-        global $SQL;
         try {
-            return $SQL->query([
+            return Sql::query([
                 "tab"=>static::$tab
                 ,"query"=>$param
             ]);
@@ -258,9 +256,8 @@ trait MethodsSql {
         }
     }
     public static function sqlFind($params){
-        global $SQL;
         try {
-            return $SQL->query([
+            return Sql::query([
                 "tab"=>static::$tab
                 ,"query"=>$params
             ]);
@@ -272,9 +269,8 @@ trait MethodsSql {
         }
     }
     public static function sqlInsert($params){
-        global $SQL;
         try {
-            return $SQL->insert([
+            return Sql::insert([
                 "tab" => static::$tab,
                 "data" => $params
             ]);
@@ -286,7 +282,6 @@ trait MethodsSql {
         }
     }
     public static function sqlDeleteById($ids) {
-        global $SQL;
         try {
             if (is_int($ids)) {
                 $ids = [$ids];
@@ -297,7 +292,7 @@ trait MethodsSql {
                 $result['data'] = [];
                 return $result;
             }
-            $deleted_count = $SQL->delete([
+            $deleted_count = Sql::delete([
                 "tab" => static::$tab,
                 "query" => [
                     "id" => ["in"=>$ids]
@@ -313,9 +308,8 @@ trait MethodsSql {
         }
     }
     public static function sqlUpdate($data,$ids){
-        global $SQL;
         try {
-            return $SQL->update([
+            return Sql::update([
                 "tab" => static::$tab,
                 "data" => $data,
                 "query" => [

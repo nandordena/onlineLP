@@ -1,5 +1,5 @@
 <?php
-include_once $BASEDIR."/sql.php";
+include_once $BASEDIR."/core/php/sql.php";
 
 class MainController {
     use MethodsSql;

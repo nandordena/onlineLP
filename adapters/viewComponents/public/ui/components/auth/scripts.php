@@ -1,21 +1,9 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<?
-  include $BASEDIR."/core/js/fetch.php";
-  include $BASEDIR."/core/js/cookies.php";
-?>
 <script>
-    if (typeof window.App === "undefined" || typeof window.App !== "function") {
-        window.App = class App {};
-    }
-    if (typeof window.app === "undefined" || !(window.app instanceof window.App)) {
-        window.app = new window.App();
-    }
-    if (typeof window.Auth === "undefined" || typeof window.Auth !== "function") {
-        window.Auth = class Auth {};
-    }
-    if (typeof window.auth === "undefined" || !(window.auth instanceof window.Auth)) {
-        window.auth = new window.Auth();
-    }
+    
+    <?=initJsClass("App","app")?>
+    <?=initJsClass("Auth","auth")?>
+
     window.Auth.prototype.onLogin = function(e,response,error) {
         const form = e.target;
         if(!auth.errorForm(e,response)){
@@ -24,15 +12,6 @@
             }else{
                 form.setAttribute('data-error', 'Session error: unable to set session cookies. Pleace try login');
             }
-        }
-    }
-    window.Auth.prototype.onLogout = function(e,response,error){
-        const form = e.target;
-        if(!auth.errorForm(e,response)){
-            app.removeCookie('sessionId');
-            app.removeCookie('sessionKey');
-            app.removeCookie('user');
-            window.location.reload();
         }
     }
     window.Auth.prototype.errorForm = function(e,response) {

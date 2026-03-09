@@ -43,3 +43,19 @@ function validateSession(){
     ]);
     return $result; 
 }
+
+//PREPRINTS
+//JS
+function initJsClass($class,$object){
+    if (!is_string($class) || !is_string($object)) {
+        return '';
+    }
+    echo "
+        if (typeof window.{$class} === 'undefined' || typeof window.{$class} !== 'function') {
+            window.{$class} = class {$class} {};
+        }
+        if (typeof window.{$object} === 'undefined' || !(window.{$object} instanceof window.{$class})) {
+            window.{$object} = new window.{$class}();
+        }
+    ";    
+}

@@ -2,6 +2,8 @@
 include_once __DIR__."/core/php/init.php";
 include_once $BASEDIR."/commons/functions.php";
 include_once $BASEDIR."/commons/mainStyle.php";
+include_once $BASEDIR."/core/js/fetch.php";
+include_once $BASEDIR."/core/js/cookies.php";
 
 $_ADAPTER="VIEW_COMPONENTS";
 

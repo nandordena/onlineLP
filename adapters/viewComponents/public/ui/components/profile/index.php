@@ -10,7 +10,7 @@ $username = explode('@', $userEmail)[0];
                  alt="User Avatar" class="avatar">
         </div>
         <p class="username"><?php echo htmlspecialchars($username); ?></p>
-        <form class="fetchform" method="POST" onEnd="auth.onLogout">
+        <form class="fetchform" method="POST" onEnd="profile.onLogout">
             <button type="submit" class="logout-btn">Log Out</button>
             <input type="hidden" name="adapter" value="userManager">
             <input type="hidden" name="endpoint" value="logout">

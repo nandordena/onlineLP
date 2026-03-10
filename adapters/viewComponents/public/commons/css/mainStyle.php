@@ -1,16 +1,15 @@
 <?
     $theme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : "dark";
-    $themeFile = $BASEDIR."/commons/theme-{$theme}.php";
+    $themeFile = $BASEDIR."/commons/css/theme-{$theme}.php";
     if (file_exists($themeFile)) {
         include $themeFile;
     } else {
-        include $BASEDIR."/commons/theme-dark.php";
+        include $BASEDIR."/commons/css/theme-dark.php";
     }
+    include $BASEDIR."/commons/css/clearcss.php";
 ?>
 <style>
     body{
-        margin:0;
-        padding: 0;
         display:flex;
         background: var(--bg-1);
         color: var(--fnt-1);
@@ -36,7 +35,7 @@
     }
 
     a, input{
-        color: var(--fnt-link);
+        color: var(--fnt-2);
     }
     input{
         background: var(--bg-2);
@@ -61,7 +60,7 @@
         color:var(--color-2);
         background: var(--bg-4);
     }
-    
+
     .spacing{
         margin:var(--spacing);
         padding:var(--spacing);

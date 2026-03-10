@@ -23,7 +23,7 @@
     .auth form[data-error]::after {
         content: "\A" attr(data-error);
         display: block;
-        color: #d32f2f;
+        color: var(--color-exit);
         background: none;
         font-size: 0.95em;
         margin-top: 6px;

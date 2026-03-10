@@ -2,38 +2,37 @@
     .profile-container {
         display: flex;
         justify-content: center;
-        padding: 20px;
+        padding: var(--spacing);
     }
     .profile-container .profile-card {
         text-align: center;
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #f5f5f5;
+        padding: var(--spacing);
+        border-radius: var(--spacing);
+        color:var(--fnt-3);
+        background: var(--bg-2);
     }
     .profile-container .user-icon {
-        margin-bottom: 15px;
+        margin-bottom: var(--spacing);
     }
     .profile-container .avatar {
-        width: 80px;
-        height: 80px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         border: 2px solid #ddd;
     }
     .profile-container .username {
         font-size: 18px;
         font-weight: 600;
-        margin: 10px 0;
+        margin: var(--spacing) 0;
     }
     .profile-container .logout-btn {
-        padding: 10px 20px;
-        background-color: #dc3545;
+        padding: var(--spacing);
+        background-color:var(--color-exit);
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: var(--spacing);
         cursor: pointer;
         font-size: 14px;
-    }
-    .profile-container .logout-btn:hover {
-        background-color: #c82333;
+        margin:var(--spacing) 0;
     }
 </style>

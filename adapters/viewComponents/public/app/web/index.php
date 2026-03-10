@@ -1,4 +1,6 @@
 <?php
+include_once $BASEDIR."/app/web/header.php"; 
+
 session_start();
 $isSessionValid = false;
 

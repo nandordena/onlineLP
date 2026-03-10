@@ -16,24 +16,32 @@ function loadUiElement($element, $data = [], $type = "components") {
         if (!file_exists($uiPath)) {
             echo "<!-- UI element file not found: {$type}:{$element}:{$element}/{$file} -->";
         }else{
-            echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
+            extract($data, EXTR_OVERWRITE);
+            if ($file === "index.php") {
+                include $uiPath;
+                echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
+            } else {
+                $includes = include_once $uiPath;
+                echo $includes;
+                if($includes === 1){
+                    echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
+                };
+            }
         }
-        // Make data variables available inside the included file
 
-        extract($data, EXTR_OVERWRITE);
-        include $uiPath;
+        
         $result .= ob_get_clean();
     }
     return $result;
 }
 function loadComponent($element, $data = []){
-    return loadUiElement($element,$data = [],"components");
+    return loadUiElement($element,$data,"components");
 }
 function loadLayout($element, $data = []){
-    return loadUiElement($element,$data = [],"layouts");
+    return loadUiElement($element,$data,"layouts");
 }
 function loadForm($element,$data = []){
-    return loadUiElement($element,$data = [],"forms");
+    return loadUiElement($element,$data,"forms");
 }
 
 function validateSession(){

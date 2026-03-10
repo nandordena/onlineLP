@@ -6,23 +6,23 @@
 </div>
 
 <div class="auth">
-  <form class="fetchform" method="post" style=""  onEnd="auth.onLogin">
-    <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
-    <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
-    <button type="submit" style="margin: 6px 0; width: 60%;">Login</button>
+  <form class="fetchform" method="post"   onEnd="auth.onLogin">
+    <input type="text" name="email" placeholder="email" required>
+    <input type="password" name="pass" placeholder="Password" required>
+    <button type="submit" >Login</button>
     <input type="hidden" name="adapter" value="userManager">
     <input type="hidden" name="endpoint" value="login">
   </form>
-  <hr style="width: 60%; margin: 16px 0 0 0; border: 0; border-top: 1px solid #ccc;">
-  <form class="fetchform" method="post" style="margin: 8px 0; display: flex; flex-direction: column; align-items: center; width: 100%;"  onEnd="auth.onLogin">
-    <input type="text" name="email" placeholder="email" required style="margin: 4px 0; width: 60%;">
-    <input type="password" name="pass" placeholder="Password" required style="margin: 4px 0; width: 60%;">
-    <input type="password" name="repass" placeholder="Repeat Password" required style="margin: 4px 0; width: 60%;">
-    <button type="submit" style="margin: 6px 0; width: 60%;">Register</button>
+  <hr>
+  <form class="fetchform" method="post" onEnd="auth.onLogin">
+    <input type="text" name="email" placeholder="email" required>
+    <input type="password" name="pass" placeholder="Password" required>
+    <input type="password" name="repass" placeholder="Repeat Password" required>
+    <button type="submit" >Register</button>
     <input type="hidden" name="adapter" value="userManager">
     <input type="hidden" name="endpoint" value="new">
   </form>
-  <hr style="width: 60%; margin: 16px 0 0 0; border: 0; border-top: 1px solid #ccc;">
-  <span style="margin: 8px 0; color: #888;">or</span>
+  <hr>
+  <span class="spacing fntc-4">or</span>
   <div class="g_id_signin"></div>
 </div>

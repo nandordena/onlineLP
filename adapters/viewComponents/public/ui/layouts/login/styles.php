@@ -6,7 +6,7 @@
         justify-content: center;
         align-content: center;
         margin: auto;
-        max-width: 400px;
+        max-width: 250px;
         flex-direction: column;
     }
 </style>

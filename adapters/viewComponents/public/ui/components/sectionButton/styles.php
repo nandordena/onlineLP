@@ -22,7 +22,7 @@
     <?=
         implode(",\n", array_map(function( $section ){
             return "body[data-active-section=\"{$section['layer']}\"] .com_sectionButton[data-active=\"{$section['layer']}\"]";
-        } , $INIT["sectionButtons"] ));
+        } , $INIT["sections"] ));
     ?>{
         outline: solid var(--spacing) var(--bg-2);
         background: transparent;

@@ -33,8 +33,10 @@ if (
     }
 }
 
+?><body data-active-section="<?=(reset($INIT['sections']))["layer"]?>"><?
 if ($isSessionValid) {
     echo loadLayout("home");
 } else {
     echo loadLayout("login");
 }
+?></body><?

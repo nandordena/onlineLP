@@ -1,3 +1,4 @@
-<div class="comp_home">
+<div class="com_home">
     <?=loadLayout("menu")?>
+    <?=loadLayout("sections")?>
 </div>

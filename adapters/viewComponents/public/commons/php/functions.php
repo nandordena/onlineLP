@@ -1,7 +1,7 @@
 <?php
 
 function loadUiElement($element, $data = [], $type = "components") {
-    global $BASEDIR;
+    global $BASEDIR,$INIT;
 
     $files = [
         "styles.php"

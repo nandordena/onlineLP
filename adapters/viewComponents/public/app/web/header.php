@@ -3,4 +3,5 @@
     include_once $BASEDIR."/core/js/cookies.php";
     include_once $BASEDIR."/core/js/fetch.php";
     include_once $BASEDIR."/core/js/events.php";
+    include_once $BASEDIR."/core/js/functions.php";
 ?>

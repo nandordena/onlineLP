@@ -19,5 +19,13 @@
         margin-top: var(--spacing);
         color:var(--fnt-4);
     }
-    
+    <?=
+        implode(",\n", array_map(function( $section ){
+            return "body[data-active-section=\"{$section['layer']}\"] .com_sectionButton[data-active=\"{$section['layer']}\"]";
+        } , $INIT["sectionButtons"] ));
+    ?>{
+        outline: solid var(--spacing) var(--bg-2);
+        background: transparent;
+    }
+
 </style>

@@ -9,7 +9,8 @@ window.App.prototype.eventHandeler = function(e) {
             // Support dot notation, e.g. "myNamespace.myFunc"
             const handler = eventRef.split('.').reduce((obj, key) => obj && obj[key], window);
             if (typeof handler === 'function') {
-                handler(e, target);
+                const eventData = target.getAttribute && target.getAttribute('data-event-data');
+                handler(e, eventData);
                 return;
             }
         }

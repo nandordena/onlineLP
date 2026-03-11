@@ -1,38 +1,40 @@
 <style>
-    .profile-container {
+    .com_profile {
         display: flex;
+        flex-direction:column;
         justify-content: center;
         padding: var(--spacing);
-    }
-    .profile-container .profile-card {
+        margin: calc(var(--spacing) * 2);
         text-align: center;
-        padding: var(--spacing);
         border-radius: var(--spacing);
         color:var(--fnt-3);
         background: var(--bg-2);
     }
-    .profile-container .user-icon {
+    .com_profile .user-icon {
         margin-bottom: var(--spacing);
     }
-    .profile-container .avatar {
+    .com_profile .avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         border: 2px solid #ddd;
     }
-    .profile-container .username {
-        font-size: 18px;
+    .com_profile .username {
+        font-size: 12px;
         font-weight: 600;
         margin: var(--spacing) 0;
     }
-    .profile-container .logout-btn {
+    .com_profile .logout-btn {
         padding: var(--spacing);
-        background-color:var(--color-exit);
+        margin: var(--spacing) 0;
+        background: var(--bg-1);
         color: white;
         border: none;
         border-radius: var(--spacing);
         cursor: pointer;
         font-size: 14px;
-        margin:var(--spacing) 0;
+    }
+    .com_profile .logout-btn:hover {
+        background: var(--color-exit);
     }
 </style>

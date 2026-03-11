@@ -19,6 +19,10 @@
         margin-top: var(--spacing);
         color:var(--fnt-4);
     }
+    .com_sectionButton i{
+        min-height: 1em; /*icon placeholder*/
+        min-width: 1.25em;  /*icon placeholder*/
+    }
     <?=
         implode(",\n", array_map(function( $section ){
             return "body[data-active-section=\"{$section['layer']}\"] .com_sectionButton[data-active=\"{$section['layer']}\"]";

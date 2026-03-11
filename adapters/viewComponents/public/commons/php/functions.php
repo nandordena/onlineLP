@@ -22,13 +22,11 @@ function loadUiElement($element, $data = [], $type = "components") {
                 echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
             } else {
                 $includes = include_once $uiPath;
-                echo $includes;
                 if($includes === 1){
                     echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
                 };
             }
         }
-
         
         $result .= ob_get_clean();
     }

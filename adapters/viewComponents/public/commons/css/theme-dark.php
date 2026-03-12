@@ -2,6 +2,7 @@
     :root{
         --color-1: #000;
         --color-2: #666;
+        --color-3: #888;
 
         --color-exit: #822;
 

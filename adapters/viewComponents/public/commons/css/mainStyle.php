@@ -75,4 +75,20 @@
     .fntc-4{color:var(--fnt-4);}
     .fntc-link{color:var(--fnt-link);}
 
+    /*PSEUDO*/
+    [data-wathermark]:before{
+        content: attr(data-wathermark);
+        position: relative;
+        display: flex;
+        width: 1em;
+        height: 1em;
+        top: calc(50% - 0.5em);
+        left: calc(50% - 0.5em);
+        align-content: center;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        opacity: 50%;
+    }
+
 </style>

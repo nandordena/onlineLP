@@ -74,6 +74,6 @@ class BerericCurl {
         $params["sessionId"] = $_COOKIE['sessionId'];
         $params["sessionKey"] = $_COOKIE['sessionKey'];
         $params["user"] = $_COOKIE['user'];
-        return post($adapter, $endpoint, $params);
+        return static::post($adapter, $endpoint, $params);
     }
 }

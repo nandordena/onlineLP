@@ -1,7 +1,16 @@
 <?php
 include_once __DIR__."/core/php/init.php";
+include_once $BASEDIR."/core/php/curl.php";
 
 $_ADAPTER="CONTROL_ROOM";
+
+$session = BerericCurl::post('userManager','session.validate',[
+    'user' => $_REQUEST['user']
+    ,'sessionId' => $_REQUEST['sessionId']
+    ,'sessionKey' => $_REQUEST['sessionKey']
+]);
+
+echo json_encode($session,true);
 
 include_once $BASEDIR."/controlRoom.php";
 

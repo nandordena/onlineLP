@@ -70,4 +70,10 @@ class BerericCurl {
             'data' => []
         ];
     }
+    public static function stdPost($adapter, $endpoint, $params = []) {
+        $params["sessionId"] = $_COOKIE['sessionId'];
+        $params["sessionKey"] = $_COOKIE['sessionKey'];
+        $params["user"] = $_COOKIE['user'];
+        return post($adapter, $endpoint, $params);
+    }
 }

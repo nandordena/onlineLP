@@ -22,3 +22,11 @@ CREATE TABLE `workspace` (
 	`name` VARCHAR(50) NOT NULL COLLATE,
 	PRIMARY KEY (`id`) USING BTREE
 );
+
+CREATE TABLE `user_workspace` (
+	`user_id` INT NOT NULL,
+	`workspace_id` INT NOT NULL,
+	PRIMARY KEY (`user_id`, `workspace_id`) USING BTREE,
+	INDEX `workspace_id` (`workspace_id`) USING BTREE
+)
+;

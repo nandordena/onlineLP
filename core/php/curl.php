@@ -65,15 +65,18 @@ class BerericCurl {
         if (is_array($decoded)) {
             return $decoded;
         }
-        return [
+        $result =[
             'errors' => ["Response not JSON: " . substr($response, 0, 200)],
             'data' => []
         ];
+        return $result;
+    
     }
     public static function stdPost($adapter, $endpoint, $params = []) {
         $params["sessionId"] = $_COOKIE['sessionId'];
         $params["sessionKey"] = $_COOKIE['sessionKey'];
         $params["user"] = $_COOKIE['user'];
-        return static::post($adapter, $endpoint, $params);
+        $result = static::post($adapter, $endpoint, $params);
+        return $result;
     }
 }

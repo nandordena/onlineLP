@@ -10,11 +10,35 @@ $session = BerericCurl::post('userManager','session.validate',[
     ,'sessionKey' => $_REQUEST['sessionKey']
 ]);
 
-echo json_encode($session,true);
+if (
+    !isset($session['data'])
+    || !($session['data'] === true)
+) {
+    http_response_code(401);
+    echo json_encode([
+        "sessage" => "session invalid",
+        "error" => "401",
+        "errors" => ["session invalid"],
+        "action" => "logout"
+    ]);
+    BerericCurl::post('userManager','session.logout',[
+        'user' => $_REQUEST['user']
+        ,'sessionId' => $_REQUEST['sessionId']
+        ,'sessionKey' => $_REQUEST['sessionKey']
+    ]);
+    exit;
+}
 
 include_once $BASEDIR."/controlRoom.php";
+include_once $BASEDIR."/workspace.php";
 
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+
+$workspaceEndpoints = [
+    "Workspace.getByUser"
+];
+$roomsEndpoints = [
+];
 
 switch ($uri) {
     case '':
@@ -22,6 +46,31 @@ switch ($uri) {
         break;
 
     default:
-        http_response_code(404);
-        echo '{"error":"404","errors":["invalid endpoint"]}';
+        if (
+            in_array($uri, $roomsEndpoints)
+            && method_exists("Room", $uri)
+        ) {
+            $result = Room::$uri($_REQUEST);
+            if(method_exists("Room", $endpoint)){
+                MainController::response(
+                    "Endpoint OK",
+                    $result['errors'],
+                    $result['data']
+                );
+            }
+            die();
+        }
+        if (in_array($uri, $workspaceEndpoints)) {
+            $endpoint = str_replace("Workspace.","",$uri);
+            if(method_exists("Workspace", $endpoint)){
+                $result['data'] = Workspace::$endpoint($_REQUEST);
+                MainController::response(
+                    "Endpoint OK",
+                    $result['errors'],
+                    $result['data']
+                );
+            }
+            die();
+        }
+        break;
 }

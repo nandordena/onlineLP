@@ -33,7 +33,8 @@ class Sql{
             // Build a PDO query with the given params
             $tab = isset($params['tab']) ? $params['tab'] : null;
             $conditions = isset($params['query']['and']) ? $params['query']['and'] : [];
-            if (!$tab || empty($conditions)) {
+            $query = isset($params['querystring']) ? $params['querystring'] : null;
+            if ((!$query || empty($query)) && (!$tab || empty($conditions))) {
                 $result['error'] = "Invalid query parameters";
                 $result['data'] = [];
                 echo json_encode($result,true);
@@ -41,14 +42,18 @@ class Sql{
             }
 
             // Build WHERE clause with named placeholders
-            $whereParts = [];
-            foreach ($conditions as $column => $value) {
-                $whereParts[] = "$column = :$column";
+            if(isset($query)){
+                $sql = $query;
+            }else{
+                $whereParts = [];
+                foreach ($conditions as $column => $value) {
+                    $whereParts[] = "$column = :$column";
+                }
+                $whereClause = implode(" AND ", $whereParts);
+                $sql = "SELECT * FROM `$tab` WHERE $whereClause";
             }
-            $whereClause = implode(" AND ", $whereParts);
 
             // Prepare SQL
-            $sql = "SELECT * FROM `$tab` WHERE $whereClause";
             $pdo = static::pdo();
             $stmt = $pdo->prepare($sql);
 

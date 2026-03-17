@@ -1,5 +1,5 @@
 <style>
-    .com_workspaces{
+    .com_workspace{
         
     }
 </style>

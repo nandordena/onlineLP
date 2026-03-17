@@ -31,11 +31,11 @@ static $INIT = [
             ,"layer"=>"config"
             ,"uiLayout"=>"config"
         ]
-        ,"space"=>[
-            "name"=>"space"
+        ,"workspace"=>[
+            "name"=>"workspace"
             ,"icon"=>"fa-regular fa-building"
-            ,"layer"=>"space"
-            ,"uiLayout"=>"space"
+            ,"layer"=>"l_workspace"
+            ,"uiLayout"=>"workspace"
         ]
     ]
 ];

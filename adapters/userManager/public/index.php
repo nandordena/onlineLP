@@ -34,7 +34,6 @@ switch ($uri) {
             $result = User::$uri($_REQUEST);
             MainController::response(
                 "Endpoint OK",
-                $result['errors'],
                 $result['data']
             );
             die();
@@ -45,7 +44,6 @@ switch ($uri) {
                 $result['data'] = Session::$endpoint($_REQUEST);
                 MainController::response(
                     "Endpoint OK",
-                    $result['errors'],
                     $result['data']
                 );
                 die();

@@ -135,10 +135,10 @@ class MainController {
     }
 
     //RESPONSE
-    public static function response($message, $errors = [], $data = []) {
+    public static function response($message, $data = []) {
         echo json_encode([
             "message" => $message,
-            "errors" => $errors,
+            "errors" => static::$errors,
             "data" => $data
         ]);
     }

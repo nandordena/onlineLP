@@ -247,7 +247,7 @@ class Sql{
 }
 
 trait MethodsSql {
-    public static function sqlGet($param){
+    private static function sqlGet($param){
         try {
             return Sql::query([
                 "tab"=>static::$tab
@@ -260,7 +260,7 @@ trait MethodsSql {
             return $result;
         }
     }
-    public static function sqlFind($params){
+    private static function sqlFind($params){
         try {
             return Sql::query([
                 "tab"=>static::$tab
@@ -273,7 +273,7 @@ trait MethodsSql {
             return $result;
         }
     }
-    public static function sqlInsert($params){
+    private static function sqlInsert($params){
         try {
             return Sql::insert([
                 "tab" => static::$tab,
@@ -286,7 +286,7 @@ trait MethodsSql {
             return $result;
         }
     }
-    public static function sqlDeleteById($ids) {
+    private static function sqlDeleteById($ids) {
         try {
             if (is_int($ids)) {
                 $ids = [$ids];
@@ -312,7 +312,7 @@ trait MethodsSql {
             return $result;
         }
     }
-    public static function sqlUpdate($data,$ids){
+    private static function sqlUpdate($data,$ids){
         try {
             return Sql::update([
                 "tab" => static::$tab,

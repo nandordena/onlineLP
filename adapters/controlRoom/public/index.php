@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__."/core/php/init.php";
 include_once $BASEDIR."/core/php/curl.php";
+include_once $BASEDIR."/core/php/user.php";
 
 $_ADAPTER="CONTROL_ROOM";
 
@@ -15,17 +16,13 @@ if (
     || !($session['data'] === true)
 ) {
     http_response_code(401);
-    echo json_encode([
-        "sessage" => "session invalid",
-        "error" => "401",
-        "errors" => ["session invalid"],
-        "action" => "logout"
-    ]);
     BerericCurl::post('userManager','session.logout',[
         'user' => $_REQUEST['user']
         ,'sessionId' => $_REQUEST['sessionId']
         ,'sessionKey' => $_REQUEST['sessionKey']
     ]);
+    self::addError("session invalid");
+    self::response("error");
     exit;
 }
 
@@ -54,7 +51,6 @@ switch ($uri) {
             if(method_exists("Room", $endpoint)){
                 MainController::response(
                     "Endpoint OK",
-                    $result['errors'],
                     $result['data']
                 );
             }
@@ -66,7 +62,6 @@ switch ($uri) {
                 $result['data'] = Workspace::$endpoint($_REQUEST);
                 MainController::response(
                     "Endpoint OK",
-                    $result['errors'],
                     $result['data']
                 );
             }

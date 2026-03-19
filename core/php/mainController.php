@@ -5,6 +5,7 @@ class MainController {
     use MethodsSql;
     
     protected static $errors = [];
+    protected static $success = [];
 
     // Error handler
     public static function addError($message) {
@@ -20,15 +21,12 @@ class MainController {
     //MODEL
     public static function insert($params) {
         try {
-            // Handle required fields as per child (e.g., 'user' => 'email', 'pass' => 'pass')
             if (property_exists(get_called_class(), 'inserRequired')) {
-                foreach (static::inserRequired as $key => $alias) {
-                    // If defined as KEY=>VAL, use the field in $params by key or by value
+                foreach (static::$inserRequired as $key => $alias) {
                     $field = is_int($key) ? $alias : $key;
                     if (empty($params[$field])) {
                         static::addError("Field '{$field}' is required.");
                     }
-                    // Switch on field for type-specific validation logic
                     switch ($field) {
                         case 'email':
                             if (!filter_var($params[$field], FILTER_VALIDATE_EMAIL)) {
@@ -46,9 +44,8 @@ class MainController {
             if (!empty(static::getErrors())) {
                 return static::getErrors();
             }
-            // Use sqlInsert from MethodsSql trait
-            $insertId = static::sqlInsert($params);
-            static::$success[] = $insertId;
+            $insertId = self::sqlInsert($params);
+            self::$success[] = $insertId;
             return $insertId;
         } catch (\Throwable $th) {
             static::addError($th->getMessage());

@@ -12,13 +12,16 @@ class Workspace extends MainController {
         "name"
     ];
 
-    public static function getByUser(){
+    public static function getByUser($conditions = []){
+        $where = $conditions;
+        $where[]= "uw.user = '".$_COOKIE['user']."'";
         $sql = "
             SELECT ws.*
             FROM workspace ws
             JOIN user_workspace uw ON uw.workspace_id = ws.id
-            WHERE uw.user = '".$_COOKIE['user']."' 
-        ";
+            WHERE
+        ". join(" AND " , $where );
+
         $result = Sql::query(['querystring'=>$sql]);
         return $result;
     }
@@ -32,12 +35,7 @@ class Workspace extends MainController {
             }
         }
         
-        $existing = self::sqlGet([
-            "and" => [
-                "name" => $params['name']
-                ,"user" => $USER['user']
-            ]
-        ]);
+        $existing = self::getByUser(["ws.name = '".$params['name']."'"]);
 
         if (!empty($existing) && isset($existing[0])) {
             self::addError("Error on create workspace");
@@ -60,14 +58,22 @@ class Workspace extends MainController {
                 ]
             ]);
 
-            if (!$userWorkspaceInsert || (is_array($userWorkspaceInsert) && isset($userWorkspaceInsert['errors']) && !empty($userWorkspaceInsert['errors']))) {
+            if (
+                $userWorkspaceInsert!=="0"
+                || (
+                    is_array($userWorkspaceInsert)
+                    && isset($userWorkspaceInsert['errors'])
+                    && !empty($userWorkspaceInsert['errors'])
+                )
+            ) {
+                self::sqlDeleteById(($insertId)*1);
                 self::addError("Failed to associate user with workspace.");
                 self::response("Error creating workspace");
                 exit;
             }
 
             self::response("Workspace created successfully", ["id" => $insertId]);
-            
+            exit;
         }
 
     }

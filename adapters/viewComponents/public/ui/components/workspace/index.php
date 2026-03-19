@@ -3,11 +3,11 @@
 $type="add";
 if($type=="add"){
     ?>
-    <div class="com_workspace add" data-event-click="workspaces.add">
-        <form class="fetchform" method="post" onEnd="onend_method">
-            <input type="text" name="name">
-            <input type="hidden" name="adapter" value="adapter">
-            <input type="hidden" name="endpoint" value="endpoint">
+    <div class="com_workspace add">
+        <form class="fetchform" method="post" onEnd="workspaces.addNewSpace">
+            <input type="text" name="name" placeholder="new workspace name">
+            <input type="hidden" name="adapter" value="controlRoom">
+            <input type="hidden" name="endpoint" value="workspace.new">
             <button type="submit" class="btn add-btn">+</button>
         </form>
     </div>

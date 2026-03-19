@@ -1,3 +1,3 @@
-<div class="com_section" data-active="<?=$layer?>">
+<div class="lay_section" data-active="<?=$layer?>">
     <?=loadLayout($uiLayout)?>
 </div>

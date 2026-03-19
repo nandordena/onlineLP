@@ -1,4 +1,4 @@
-<div class="com_home">
+<div class="lay_home">
     <?=loadLayout("menu")?>
     <div class="main_content">
         <?=loadLayout("monitors")?>

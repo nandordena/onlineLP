@@ -1,9 +1,13 @@
 <?
-include_once $BASEDIR."/core/php/curl.php";
+    include_once $BASEDIR."/core/php/curl.php";
 ?>
-<div class="com_workspace">
-    <?
-        $result = BerericCurl::stdPost("controlRoom","Workspace.getByUser");
-        echo json_encode($result,true);
-    ?>
+<div class="lay_workspace">
+WORKSPACE
+<?
+    echo loadComponent("workspace",["type"=>"add"]);
+    $workspaces = BerericCurl::stdPost("controlRoom","Workspace.getByUser");
+    foreach ($workspaces['data'] as $ws) {
+        echo loadComponent("workspace",$ws);
+    }
+?>
 </div>

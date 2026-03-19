@@ -1,4 +1,4 @@
-<div class="comp_login">
+<div class="lay_login">
     <?= loadComponent('logo');?>
     <div class="space-2"></div>
     <?= loadComponent('auth');?>

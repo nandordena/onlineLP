@@ -1,5 +1,5 @@
 <style>
-    .com_sectionSelector{
+    .lay_sectionSelector{
         display: flex;
         flex-direction: column;
         align-items: center;

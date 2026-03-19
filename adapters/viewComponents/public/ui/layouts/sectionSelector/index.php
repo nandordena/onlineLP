@@ -1,4 +1,4 @@
-<div class="com_sectionSelector">
+<div class="lay_sectionSelector">
 
 <?
 foreach ($INIT['sections'] as $name => $sectionButton) {

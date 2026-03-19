@@ -1,5 +1,5 @@
 <style>
-    .comp_login{
+    .lay_login{
         width: 100%;
         display: flex;
         align-items: center;

@@ -1,5 +1,5 @@
 <style>
-    .com_home{
+    .lay_home{
         display:flex;
         width: 100%;
     }

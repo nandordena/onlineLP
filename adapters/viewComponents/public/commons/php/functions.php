@@ -1,6 +1,6 @@
 <?php
 
-function loadUiElement($element, $data = [], $type = "components") {
+function loadUiElement($element, $data = [], $uiType = "components") {
     global $BASEDIR,$INIT;
 
     $files = [
@@ -12,18 +12,18 @@ function loadUiElement($element, $data = [], $type = "components") {
     $result = "";
     foreach ($files as $file) {
         ob_start();
-        $uiPath = $BASEDIR . "/ui/{$type}/{$element}/{$file}";
+        $uiPath = $BASEDIR . "/ui/{$uiType}/{$element}/{$file}";
         if (!file_exists($uiPath)) {
-            echo "<!-- UI element file not found: {$type}:{$element}:{$element}/{$file} -->";
+            echo "<!-- UI element file not found: {$uiType}:{$element}:{$element}/{$file} -->";
         }else{
             extract($data, EXTR_OVERWRITE);
             if ($file === "index.php") {
                 include $uiPath;
-                echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
+                echo "<!-- UI element file load: {$uiType}:{$element}:{$file} -->";
             } else {
                 $includes = include_once $uiPath;
                 if($includes === 1){
-                    echo "<!-- UI element file load: {$type}:{$element}:{$file} -->";
+                    echo "<!-- UI element file load: {$uiType}:{$element}:{$file} -->";
                 };
             }
         }

@@ -55,7 +55,8 @@ class Workspace extends MainController {
                 "tab" => "user_workspace",
                 "data" => [
                     "user" => $USER['user'],
-                    "workspace_id" => $insertId
+                    "workspace_id" => $insertId,
+                    "access_type" => 'owner'
                 ]
             ]);
 

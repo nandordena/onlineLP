@@ -105,7 +105,7 @@ class Session extends MainController {
             }
             if (!empty($sessionIds)) {
                 $stmt = static::sqlDeleteById($sessionIds);
-                $deletedCount = $stmt->rowCount();
+                $deletedCount = $stmt['data']['deleted_count']['deleted_count'];
             } else {
                 $deletedCount = 0;
             }

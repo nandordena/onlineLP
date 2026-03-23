@@ -37,7 +37,7 @@ class User extends MainController {
                 return $result;
             }
             // Check if user already exists in the database
-            $existingUser = static::sqlFind([
+            $existingUser = self::sqlFind([
                 "and" => [
                     "user" => $params['email']
                 ]

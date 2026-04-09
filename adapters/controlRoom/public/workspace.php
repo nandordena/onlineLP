@@ -76,4 +76,41 @@ class Workspace extends MainController {
         }
 
     }
+
+    public static function remove($params){
+        // Check if user is owner of the workspace
+        global $USER;
+
+        $id = $params['id'] ?? null;
+        if (!$id) {
+            self::addError("Workspace id missing.");
+            self::response("No workspace id provided.");
+            exit;
+        }
+
+        $userWs = Sql::query([
+            "tab" => "user_workspace",
+            "query" => ["and"=>[
+                "user" => $USER['user'],
+                "workspace_id" => $id,
+                "access_type" => 'owner'
+            ]]
+        ]);
+
+        if (!$userWs || !isset($userWs[0])) {
+            self::addError("You are not the owner of this workspace.");
+            self::response("Only owners can remove the workspace.");
+            exit;
+        }
+
+        $delete = self::sqlDeleteById([$id]);
+
+        if ($delete) {
+            self::response("Workspace removed successfully");
+        } else {
+            self::addError("Failed to delete workspace.");
+            self::response("Error removing workspace");
+        }
+        exit;
+    }
 }

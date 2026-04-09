@@ -1,6 +1,7 @@
 <style>
     .com_workspace{
         display: flex;
+        align-items: center;
     }
     .com_workspace form{
         display: flex;

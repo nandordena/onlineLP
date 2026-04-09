@@ -12,8 +12,7 @@ class Workspace extends MainController {
         "name"
     ];
 
-    public static function getByUser($conditions = []){
-        $where = $conditions;
+    public static function getByUser(){
         $where[]= "uw.user = '".$_COOKIE['user']."'";
         $sql = "
             SELECT ws.*

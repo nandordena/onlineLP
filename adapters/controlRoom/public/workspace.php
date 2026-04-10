@@ -28,8 +28,7 @@ class Workspace extends MainController {
         global $USER;
         foreach (self::$inserRequired as $required) {
             if (!isset($params[$required]) || empty($params[$required])) {
-                $result['error'] = "Missing required field: $required";
-                $result['data'] = [];
+                self::addError("Missing required field: $required");
                 return $result;
             }
         }
@@ -71,7 +70,10 @@ class Workspace extends MainController {
                 exit;
             }
 
-            self::response("Workspace created successfully", ["id" => $insertId]);
+            self::response("Workspace created successfully", [
+                "id" => $insertId
+                ,"name" => $params['name']
+            ]);
             exit;
         }
 

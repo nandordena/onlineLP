@@ -1,9 +1,12 @@
 <?
 include_once __DIR__."/core/php/init.php";
 include_once $BASEDIR."/commons/php/functions.php";
-include_once $BASEDIR."/commons/css/mainStyle.php";
-include_once $BASEDIR."/core/js/fetch.php";
-include_once $BASEDIR."/core/js/cookies.php";
+function includeCommonsFront(){
+    global $BASEDIR;
+    include_once $BASEDIR."/commons/css/mainStyle.php";
+    include_once $BASEDIR."/core/js/fetch.php";
+    include_once $BASEDIR."/core/js/cookies.php";
+}
 
 $_ADAPTER="VIEW_COMPONENTS";
 
@@ -18,10 +21,12 @@ $endpoints = [
 switch ($uri) {
     case '':
     case 'home':
+        includeCommonsFront();
         include_once $BASEDIR."/app/web/index.php";
         break;
 
     case 'auth':
+        includeCommonsFront();
         include_once $BASEDIR."/ui/components/auth/index.php";
         break;
 
@@ -35,11 +40,21 @@ switch ($uri) {
                 $componentFile = $parts[1];
                 $filePath = $BASEDIR . "/ui/{$componentDir}/{$componentFile}/index.php";
                 if (file_exists($filePath)) {
+                    ob_start();
+                    includeCommonsFront();
+                    $data = $_REQUEST;
                     include_once $filePath;
+                    $htmlContent = ob_get_clean();
+                    header('Content-Type: application/json');
+                    // Escape problematic JSON chars, especially control and embed tags
+                    echo json_encode(['content' => $htmlContent], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
                 } else {
-                    echo "Component for endpoint '$uri' not found at $filePath.";
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => "Component for endpoint '$uri' not found at $filePath."], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
                 }
                 exit;
+       
+           
             } else {
                 http_response_code(404);
                 echo '404';

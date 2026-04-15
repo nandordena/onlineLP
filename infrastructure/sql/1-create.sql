@@ -26,7 +26,7 @@ CREATE TABLE `workspace` (
 CREATE TABLE `user_workspace` (
 	`user` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8mb4_0900_ai_ci',
 	`workspace_id` INT NOT NULL,
-	`access_type` ENUM('owner','staff','viewer') NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`access_type` ENUM('owner','staff','viewer','main') NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
 	PRIMARY KEY (`user_id`, `workspace_id`) USING BTREE,
 	INDEX `workspace_id` (`workspace_id`) USING BTREE
 )

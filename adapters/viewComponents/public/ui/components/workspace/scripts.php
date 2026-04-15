@@ -21,5 +21,11 @@
         console.info([e,data]);
         e.submitter.parentElement.parentElement.remove();
     }
+    window.Workspace.prototype.changespace = function(e,data = []) {
+        console.info([e,data]);
+    }
+    window.Workspace.prototype.unlink = function(e,data = []) {
+        console.info([e,data]);
+    }
 </script>
 

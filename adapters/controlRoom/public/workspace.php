@@ -12,16 +12,86 @@ class Workspace extends MainController {
         "name"
     ];
 
-    public static function getByUser(){
-        $where[]= "uw.user = '".$_COOKIE['user']."'";
+    public static function getMainWorispace(){
+        // Get the user's main workspace; if it doesn't exist, build it and return the result
+        global $USER;
+        $user = isset($USER['user']) ? $USER['user'] : (isset($_COOKIE['user']) ? $_COOKIE['user'] : null);
+        if (!$user) {
+            return null;
+        }
         $sql = "
             SELECT ws.*
             FROM workspace ws
             JOIN user_workspace uw ON uw.workspace_id = ws.id
+            WHERE uw.user = '".addslashes($user)."' AND uw.access_type = 'main'
+            LIMIT 1
+        ";
+        $mainWorkspace = Sql::query(['querystring' => $sql]);
+        if (!empty($mainWorkspace) && isset($mainWorkspace[0])) {
+            return $mainWorkspace[0];
+        }
+        return self::buildMainWorispace();
+    }
+
+    public static function buildMainWorispace(){
+        // Check if the user has a "main" workspace. If not, create one with the user's own name.
+        global $USER;
+        $user = isset($USER['user']) ? $USER['user'] : (isset($_COOKIE['user']) ? $_COOKIE['user'] : null);
+        if (!$user) {
+            return null;
+        }
+
+        // 1. Search if there is a workspace associated as 'main' for this user
+        $sql = "
+            SELECT ws.*
+            FROM workspace ws
+            JOIN user_workspace uw ON uw.workspace_id = ws.id
+            WHERE uw.user = '".addslashes($user)."' AND uw.access_type = 'main'
+            LIMIT 1
+        ";
+        $mainWorkspace = Sql::query(['querystring'=>$sql]);
+        if (!empty($mainWorkspace) && isset($mainWorkspace[0])) {
+            return $mainWorkspace[0];
+        }
+
+        // 2. If it does not exist, create a new workspace with the user's name
+        $workspaceId = self::insert(['name'=>$user]);
+        if (is_array($workspaceId)) {
+            // Error creating the workspace
+            return null;
+        }
+
+        // 3. Insert into user_workspace as 'main'
+        Sql::insert([
+            "tab" => "user_workspace",
+            "data" => [
+                "user" => $user,
+                "workspace_id" => $workspaceId,
+                "access_type" => 'main'
+            ]
+        ]);
+
+        // 4. Return the created workspace
+        $ws = Sql::query(['querystring' => "SELECT * FROM workspace WHERE id = ".intval($workspaceId)]);
+        return !empty($ws) ? $ws[0] : null;
+    }
+
+    public static function getByUser(){
+        self::buildMainWorispace();
+        $where[]= "uw.user = '".$_COOKIE['user']."'";
+        $sql = "
+            SELECT ws.*, uw.access_type
+            FROM workspace ws
+            JOIN user_workspace uw ON uw.workspace_id = ws.id
             WHERE
         ". join(" AND " , $where );
-
         $result = Sql::query(['querystring'=>$sql]);
+        if (empty($result)) {
+            $mainWorkspace = self::getMainWorispace();
+            if ($mainWorkspace) {
+                $result = [$mainWorkspace];
+            }
+        }
         return $result;
     }
     public static function new($params){
